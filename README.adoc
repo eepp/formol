@@ -1,0 +1,804 @@
+ifdef::env-github[]
+:toc: macro
+endif::env-github[]
+
+ifndef::env-github[]
+:toc: left
+endif::env-github[]
+
+:idprefix:
+:idseparator: -
+
+:py3: Python{nbsp}3
+
+= Formol
+Philippe Proulx
+
+[.normal]
+image:https://img.shields.io/pypi/v/formol.svg?label=Latest%20version[link="https://pypi.python.org/pypi/formol"]
+
+[.lead]
+_**Formol**_ is a Python package which helps format a cheated version
+of
+https://0x3b.org/files/eepp-plain-text-format.html[eepp's plain text format]
+to the real thing.
+
+The main goal of this project is to help create editor/IDE extensions so
+as to quickly convert an ordinary programming language block comment, a
+Git commit message, or a plain text email message to some visually
+appealing and readable text.
+
+This package offers the simple `format()` function as well as the
+`format_c_block_comment()` and `format_prefixed_block_comment()` helpers
+to reformat C/{cpp} or prefixed block comments.
+
+== Overview
+
+The goal of Formol is to convert a <<cheats,cheated>> version of
+https://0x3b.org/files/eepp-plain-text-format.html[eepp's plain text
+format] to the actual specified format.
+
+In today's difficult world, no one wants to find the `•`{nbsp}character,
+insert the correct number of heading underline characters, or write and
+align ordered list item numbers manually. On the other hand, you _do_
+want all that stuff for your readers!
+
+For example, given this C{nbsp}comment:
+
+----
+/*
+ * = québec poutine
+ *
+ * Poutine is a beloved dish originating from Québec, Canada. It's famous for its
+ * simple yet delicious combination of fries, cheese curds, and gravy.
+ *
+ * == History
+ *
+ * Poutine was first created in the late 1950s in rural Québec. Although several small towns claim to have invented it, its exact origins are still a topic
+ * of
+ * friendly dispute.
+ *
+ * As Jean Tremblay once said:
+ *
+ * >>>
+ * Poutine is not just a dish; it's a divine experience of taste that transcends the ordinary.
+ *
+ * Each bite harmonizes the humble potato with rich gravy and spirited cheese curds, embodying the warmth and resilience of Québec itself.
+ * >>>
+ *
+ * == Ingredients
+ *
+ * Fries:: Thick-cut fries that are crispy on the outside and soft on the inside.
+ * Cheese Curds:: Fresh, squeaky cheese curds are essential.
+ * Gravy:
+ *     A light brown gravy, traditionally made from:
+ *
+ *     * Chicken
+ *     * Veal
+ *
+ *       ***
+ *
+ *       Some random code, why not:
+ *
+ *       ```
+ *       def _try_parse_pre(self):
+ *           elem = self._try_parse_pre_backticks()
+ *
+ *       if elem is not None:
+ *           return elem
+ *
+ *       return self._try_parse_pre_backticks()
+ *       ```
+ *     * Turkey stock
+ *
+ * == Preparation steps
+ *
+ * . Prepare the fries:
+ *   . Wash and peel the potatoes.
+ *
+ *     !!!
+ *     CAUTION: Peeling potatoes can be risky if not done cautiously.
+ *
+ *     Using sharp peelers or knives can lead to cuts, especially when tools slip on the slick surface of a potato.
+ *
+ *     This common kitchen task can also strain the hands and wrists, potentially causing repetitive stress injuries.
+ *
+ *     Furthermore, failing to wash potatoes before peeling can spread contaminants like:
+ *     * Pesticides
+ *     * Bacteria
+ *
+ *     This poses additional health risks.
+ *     !!!
+ *   . Cut the potatoes into thick strips, approximately 1/2 inch wide.
+ *   . Soak the potato strips in cold water for at least an hour to remove excess starch, then drain and pat dry.
+ *   . Heat oil in a deep fryer or large pot to 300°F (150°C). Fry the potato strips in batches until they are soft but not browned, about 4-5 minutes per batch.
+ *   . Increase the heat to 375°F (190°C) and refry the potatoes until golden and crispy, about 2-3 minutes.
+ * . Distribute the hot fries onto a plate or bowl.
+ * . Sprinkle fresh cheese curds over the hot fries.
+ * . Pour hot gravy over the fries and cheese curds to melt the cheese slightly.
+ *
+ * == Variations
+ *
+ * Classic poutine:: The original recipe with just fries, cheese curds, and gravy.
+ * Meat lovers poutine:: Includes additional toppings like pulled pork, bacon, or smoked meat.
+ * Veggie poutine:: Uses mushroom or vegetable-based gravy and might include other vegetable toppings.
+ *
+ * == Poutine in Québec culture
+ *
+ * Poutine is more than just a dish; it's a cultural icon
+ * in Québec. It embodies the joie de vivre of the Québécois people and is enjoyed
+ * in
+ * many settings, from
+ * fast food restaurants to fine dining establishments.
+ *
+ * == Conclusion
+ *
+ * Whether you enjoy it as a late-night snack or a hearty meal, poutine remains a testament to Québec's rich culinary traditions.
+ *
+ *
+ */
+----
+
+If this whole string is named `str`, then the result of
+`formol.format_c_block_comment(str)` (72{nbsp}columns by default) is:
+
+----
+
+/*
+ * QUÉBEC POUTINE
+ * ━━━━━━━━━━━━━━
+ * Poutine is a beloved dish originating from Québec, Canada. It's
+ * famous for its simple yet delicious combination of fries, cheese
+ * curds, and gravy.
+ *
+ * History
+ * ───────
+ * Poutine was first created in the late 1950s in rural Québec. Although
+ * several small towns claim to have invented it, its exact origins are
+ * still a topic of friendly dispute.
+ *
+ * As Jean Tremblay once said:
+ *
+ * > Poutine is not just a dish; it's a divine experience of taste that
+ * > transcends the ordinary.
+ * >
+ * > Each bite harmonizes the humble potato with rich gravy and spirited
+ * > cheese curds, embodying the warmth and resilience of Québec itself.
+ *
+ * Ingredients
+ * ───────────
+ * Fries:
+ *     Thick-cut fries that are crispy on the outside and soft on the
+ *     inside.
+ *
+ * Cheese Curds:
+ *     Fresh, squeaky cheese curds are essential.
+ *
+ * Gravy:
+ *     A light brown gravy, traditionally made from:
+ *
+ *     • Chicken
+ *
+ *     • Veal
+ *
+ *       ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+ *
+ *       Some random code, why not:
+ *
+ *           def _try_parse_pre(self):
+ *               elem = self._try_parse_pre_backticks()
+ *
+ *           if elem is not None:
+ *               return elem
+ *
+ *           return self._try_parse_pre_backticks()
+ *
+ *     • Turkey stock
+ *
+ * Preparation steps
+ * ─────────────────
+ * 1. Prepare the fries:
+ *
+ *    a) Wash and peel the potatoes.
+ *
+ *       ┌────────────────────────────────────────────────────────────┐
+ *       │ CAUTION: Peeling potatoes can be risky if not done         │
+ *       │ cautiously.                                                │
+ *       │                                                            │
+ *       │ Using sharp peelers or knives can lead to cuts, especially │
+ *       │ when tools slip on the slick surface of a potato.          │
+ *       │                                                            │
+ *       │ This common kitchen task can also strain the hands and     │
+ *       │ wrists, potentially causing repetitive stress injuries.    │
+ *       │                                                            │
+ *       │ Furthermore, failing to wash potatoes before peeling can   │
+ *       │ spread contaminants like:                                  │
+ *       │                                                            │
+ *       │ • Pesticides                                               │
+ *       │ • Bacteria                                                 │
+ *       │                                                            │
+ *       │ This poses additional health risks.                        │
+ *       └────────────────────────────────────────────────────────────┘
+ *
+ *    b) Cut the potatoes into thick strips, approximately 1/2 inch
+ *       wide.
+ *
+ *    c) Soak the potato strips in cold water for at least an hour to
+ *       remove excess starch, then drain and pat dry.
+ *
+ *    d) Heat oil in a deep fryer or large pot to 300°F (150°C). Fry the
+ *       potato strips in batches until they are soft but not browned,
+ *       about 4-5 minutes per batch.
+ *
+ *    e) Increase the heat to 375°F (190°C) and refry the potatoes until
+ *       golden and crispy, about 2-3 minutes.
+ *
+ * 2. Distribute the hot fries onto a plate or bowl.
+ *
+ * 3. Sprinkle fresh cheese curds over the hot fries.
+ *
+ * 4. Pour hot gravy over the fries and cheese curds to melt the cheese
+ *    slightly.
+ *
+ * Variations
+ * ──────────
+ * Classic poutine:
+ *     The original recipe with just fries, cheese curds, and gravy.
+ *
+ * Meat lovers poutine:
+ *     Includes additional toppings like pulled pork, bacon, or smoked
+ *     meat.
+ *
+ * Veggie poutine:
+ *     Uses mushroom or vegetable-based gravy and might include other
+ *     vegetable toppings.
+ *
+ * Poutine in Québec culture
+ * ─────────────────────────
+ * Poutine is more than just a dish; it's a cultural icon in Québec. It
+ * embodies the joie de vivre of the Québécois people and is enjoyed in
+ * many settings, from fast food restaurants to fine dining
+ * establishments.
+ *
+ * Conclusion
+ * ──────────
+ * Whether you enjoy it as a late-night snack or a hearty meal, poutine
+ * remains a testament to Québec's rich culinary traditions.
+ */
+----
+
+An important feature of Formol is that it can (most of the time) consume
+its own output without changing it (idempotency). This makes it possible
+to change parts of the formatted text, possibly cheating again, and then
+reformat it again.
+
+For example, starting with some previous output:
+
+----
+Preparation steps
+─────────────────
+1. Prepare the fries.
+
+2. Sprinkle fresh cheese curds over the hot fries.
+
+3. Pour hot gravy over the fries and cheese curds to melt the cheese
+   slightly.
+----
+
+You may change the heading add a list item as such:
+
+----
+Arrangement
+─────────────────
+1. Prepare the fries.
+. Distribute the hot fries onto a plate or bowl.
+
+2. Sprinkle fresh cheese curds over the hot fries.
+
+3. Pour hot gravy over the fries and cheese curds to melt the cheese
+   slightly.
+----
+
+Then the new result is:
+
+----
+Arrangement
+───────────
+1. Prepare the fries.
+
+2. Distribute the hot fries onto a plate or bowl.
+
+3. Sprinkle fresh cheese curds over the hot fries.
+
+4. Pour hot gravy over the fries and cheese curds to melt the cheese
+   slightly.
+----
+
+== Install Formol
+
+Formol only requires Python ≥ 3.8.
+
+To install Formol:
+
+----
+$ python3 -m pip install --user formol
+----
+
+See
+https://packaging.python.org/en/latest/tutorials/installing-packages/#installing-to-the-user-site[Installing
+to the User Site] to learn more about a user site installation.
+
+[NOTE]
+====
+Formol has a single module file, `formol.py`, which you can copy as is
+to your project to use it.
+
+`formol.py` has _no external dependencies_.
+====
+
+== Cheats
+
+Here are the Formol cheats:
+
+=== First level heading
+
+----
+= salut la gang
+----
+
+becomes
+
+----
+SALUT LA GANG
+━━━━━━━━━━━━━
+----
+
+[TIP]
+====
+You may modify a formatted first level heading and reformat: Formol
+adjusts the case and the underline length.
+
+For example:
+
+----
+SALUT LA GANG de malades
+━━━━━━━━━━━━━
+----
+====
+
+=== Second level heading
+
+----
+== Grease guns
+----
+
+becomes
+
+----
+Grease guns
+───────────
+----
+
+[TIP]
+====
+You may modify a formatted second level heading and reformat: Formol
+adjusts the underline length.
+
+For example:
+
+----
+Grease
+───────────
+----
+====
+
+=== Paragraph
+
+----
+I'm baby tote bag kogi paleo kickstarter. Chillwave crucifix `hot chicken four dollar` toast biodiesel af. Etsy sriracha pickled bodega boys neutra
+tattooed schlitz
+jianbing neutral milk hotel gentrify health goth `DSA shoreditch`
+slow-carb
+mustache.
+Bicycle rights distillery sus forage
+mlkshk irony helvetica, listicle hoodie.
+----
+
+becomes
+
+----
+I'm baby tote bag kogi paleo kickstarter. Chillwave crucifix
+`hot chicken four dollar` toast biodiesel af. Etsy sriracha pickled
+bodega boys neutra tattooed schlitz jianbing neutral milk hotel gentrify
+health goth `DSA shoreditch` slow-carb mustache. Bicycle rights
+distillery sus forage mlkshk irony helvetica, listicle hoodie.
+----
+
+Note how there's no line break in the middle of a literal string
+(between backticks).
+
+=== Break
+
+----
+Incididunt officia magna.
+
+***
+
+Ut deserunt cupidatat exercitation.
+----
+
+becomes
+
+----
+Incididunt officia magna.
+
+┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+
+Ut deserunt cupidatat exercitation.
+----
+
+=== Unordered list
+
+----
+* Bacon ipsum dolor amet bacon shoulder bresaola meatloaf kielbasa. Spare ribs capicola pastrami, hamburger.
+* Drumstick spare ribs doner filet mignon beef porchetta shankle chicken.
+
+  Alcatra ground round pork loin ham hock tenderloin chicken rump jowl. Sausage andouille ribeye turkey.
+
+  * Pastrami rump short.
+  * Prosciutto jowl alcatra.
+  * Leberkas tri-tip brisket.
+
+* Sirloin swine turkey fatback prosciutto t-bone tongue short:
+
+  ```
+  fn square(num int) int {
+    return num * num
+  }
+
+  fn main() {
+      println(square(3))
+  }
+  ```
+----
+
+becomes
+
+----
+• Bacon ipsum dolor amet bacon shoulder bresaola meatloaf kielbasa.
+  Spare ribs capicola pastrami, hamburger.
+
+• Drumstick spare ribs doner filet mignon beef porchetta shankle
+  chicken.
+
+  Alcatra ground round pork loin ham hock tenderloin chicken rump jowl.
+  Sausage andouille ribeye turkey.
+
+  ‣ Pastrami rump short.
+  ‣ Prosciutto jowl alcatra.
+  ‣ Leberkas tri-tip brisket.
+
+• Sirloin swine turkey fatback prosciutto t-bone tongue short:
+
+      fn square(num int) int {
+        return num * num
+      }
+
+      fn main() {
+          println(square(3))
+      }
+----
+
+[TIP]
+====
+You may modify a formatted unordered list: add more
+`pass:[*]`{nbsp}characters if needed so that Formol converts them to
+bullet points.
+
+For example:
+
+----
+• Bacon ipsum dolor amet bacon shoulder bresaola
+  meatloaf kielbasa. Spare ribs capicola pastrami,
+  hamburger.
+
+• Drumstick spare ribs doner filet mignon beef
+  porchetta shankle chicken.
+
+  Alcatra ground round pork loin ham hock tenderloin
+  chicken rump jowl. Sausage andouille ribeye turkey.
+
+  ‣ Pastrami rump short.
+  ‣ Prosciutto jowl alcatra.
+  * Tongue meatball frankfurter strip.
+  ‣ Leberkas tri-tip brisket.
+* Landjaeger doner ribeye, turkey shoulder
+  pancetta beef.
+----
+====
+
+=== Ordered list
+
+----
+. Bacon ipsum dolor amet bacon shoulder bresaola meatloaf kielbasa. Spare ribs capicola pastrami, hamburger.
+. Drumstick spare ribs doner filet mignon beef porchetta shankle chicken.
+
+  Alcatra ground round pork loin ham hock tenderloin chicken rump jowl. Sausage andouille ribeye turkey.
+
+  . Pastrami rump short.
+  . Prosciutto jowl alcatra.
+  . Leberkas tri-tip brisket.
+
+. Sirloin swine turkey fatback prosciutto t-bone tongue short:
+
+  ```
+  #define CUSTOM_DEFINE_gcboehm
+  #define CUSTOM_DEFINE_gcboehm_full
+  #define CUSTOM_DEFINE_gcboehm_opt
+  ```
+----
+
+becomes
+
+----
+1. Bacon ipsum dolor amet bacon shoulder bresaola meatloaf kielbasa.
+   Spare ribs capicola pastrami, hamburger.
+
+2. Drumstick spare ribs doner filet mignon beef porchetta shankle
+   chicken.
+
+   Alcatra ground round pork loin ham hock tenderloin chicken rump jowl.
+   Sausage andouille ribeye turkey.
+
+   a) Pastrami rump short.
+   b) Prosciutto jowl alcatra.
+   c) Leberkas tri-tip brisket.
+
+3. Sirloin swine turkey fatback prosciutto t-bone tongue short:
+
+       #define CUSTOM_DEFINE_gcboehm
+       #define CUSTOM_DEFINE_gcboehm_full
+       #define CUSTOM_DEFINE_gcboehm_opt
+----
+
+[TIP]
+====
+You may modify a formatted unordered list: add more `.`{nbsp}characters
+if needed so that Formol converts them to list item numbers.
+
+For example:
+
+----
+1. Bacon ipsum dolor amet bacon shoulder bresaola
+   meatloaf kielbasa. Spare ribs capicola pastrami,
+   hamburger.
+
+2. Drumstick spare ribs doner filet mignon beef
+   porchetta shankle chicken.
+
+   Alcatra ground round pork loin ham hock tenderloin
+   chicken rump jowl. Sausage andouille ribeye turkey.
+
+   a) Pastrami rump short.
+   b) Prosciutto jowl alcatra.
+   . Tongue meatball frankfurter strip.
+   c) Leberkas tri-tip brisket.
+
+. Landjaeger doner ribeye, turkey shoulder
+  pancetta beef.
+----
+====
+
+=== Definition list
+
+----
+Silken Tofu:: A soft, creamy form of tofu that blends smoothly into soups, desserts, and smoothies due to its high moisture content.
+Firm Tofu:
+    A denser variety of tofu that holds its shape well, making it ideal for grilling, frying, or stir-frying.
+
+    Firm tofu is a popular type of tofu appreciated for its sturdier texture, which allows it to maintain its shape during cooking.
+Tofu Press:
+Tofu Mold:
+    Specialized utensils designed to aid in the making and processing of tofu, enhancing its texture and culinary versatility.
+----
+
+becomes
+
+----
+Silken Tofu:
+    A soft, creamy form of tofu that blends smoothly into soups,
+    desserts, and smoothies due to its high moisture content.
+
+Firm Tofu:
+    A denser variety of tofu that holds its shape well, making it ideal
+    for grilling, frying, or stir-frying.
+
+    Firm tofu is a popular type of tofu appreciated for its sturdier
+    texture, which allows it to maintain its shape during cooking.
+
+Tofu Press:
+Tofu Mold:
+    Specialized utensils designed to aid in the making and processing of
+    tofu, enhancing its texture and culinary versatility.
+----
+
+=== Blockquote
+
+----
+>>>
+Montana, known as the "Big Sky Country," is a state that offers vast and picturesque landscapes. Here are three key highlights:
+
+* Glacier National Park
+* Battle of Little Bighorn Site
+* Fly Fishing
+>>>
+----
+
+becomes
+
+----
+> Montana, known as the "Big Sky Country," is a state that offers vast
+> and picturesque landscapes. Here are three key highlights:
+>
+> • Glacier National Park
+> • Battle of Little Bighorn Site
+> • Fly Fishing
+----
+
+[TIP]
+====
+You may modify a formatted blockquote: add more `>`{nbsp}characters as
+needed.
+
+For example:
+
+----
+> Montana, known as the "Big Sky Country," is a state that offers vast
+> and picturesque landscapes. Here are three key highlights:
+>
+> Consequat ut cillum sunt nisi adipisicing nulla ut minim dolore aliqua dolore.
+>
+> • Glacier National Park
+> • Battle of Little Bighorn Site
+> * One more thing...
+> • Fly Fishing
+----
+====
+
+=== Admonition box
+
+----
+!!!
+IMPORTANT: Be aware of the changing tides and strong currents that can swiftly turn
+a peaceful day at the beach into a dangerous situation.
+
+Before taking a dip, make sure to check the local tide schedules and swim in designated areas with lifeguards present.
+!!!
+----
+
+becomes
+
+----
+┌────────────────────────────────────────────────────────────────────┐
+│ IMPORTANT: Be aware of the changing tides and strong currents that │
+│ can swiftly turn a peaceful day at the beach into a dangerous      │
+│ situation.                                                         │
+│                                                                    │
+│ Before taking a dip, make sure to check the local tide             │
+│ schedules and swim in designated areas with lifeguards present.    │
+└────────────────────────────────────────────────────────────────────┘
+----
+
+[TIP]
+====
+You may modify a formatted admonition box: modify the existing lines or
+add new lines without dealing with box drawing characters.
+
+The first content line must start with one of:
+
+* `CAUTION:{nbsp}`
+* `IMPORTANT:{nbsp}`
+* `NOTE:{nbsp}`
+* `TIP:{nbsp}`
+* `WARNING:{nbsp}`
+
+Each new content line must start with two spaces.
+
+For example:
+
+----
+┌───────────────────────────────────────────────────────┐
+│ IMPORTANT: Be aware of the changing tides and strong  │
+│ currents that can swiftly turn a wonderful day at the  │
+│ beach into a dangerous situation.                     │
+│           │
+│ Before taking a dip, make sure to:
+
+  * Check local weather and tide reports.
+  * Use proper safety gear.
+  * Never swim alone.
+
+These precautions can help you enjoy water-related activities safely while respecting the power of nature's changing conditions.
+└────────────────────────────────────────────────────────────────────┘
+----
+====
+
+=== Preformatted text
+
+Two ways:
+
+Delimited:: {empty}
++
+----
+Here's some code for you:
+
+```
+if (idx < vec.size() - 1) {
+    vec[idx] = std::move(vec.back());
+}
+```
+
+See?
+----
++
+becomes
++
+----
+Here's some code for you:
+
+    if (idx < vec.size() - 1) {
+        vec[idx] = std::move(vec.back());
+    }
+
+See?
+----
+
+Indented:: {empty}
++
+----
+Here's some code for you:
+
+    if (idx < vec.size() - 1) {
+        vec[idx] = std::move(vec.back());
+    }
+
+See?
+----
++
+stays
++
+----
+Here's some code for you:
+
+    if (idx < vec.size() - 1) {
+        vec[idx] = std::move(vec.back());
+    }
+
+See?
+----
+
+== Limitations
+
+I am convinced that you'll find yourself in situations where the output
+of Formol isn't what you expect. If so, please create a corresponding
+https://github.com/eepp/formol/issues/new[GitHub issue]. In the
+meantime, just fix the output manually.
+
+Formol ignores some input lines, keeping them as is, namely:
+
+* Any line which starts with a link reference number, for example:
++
+----
+[1]: https://theluddite.org/
+[2]: https://www.st-hubert.com/
+----
+
+* Except for an existing <<admonition-box,admonition box>>, any line which
+  starts with one of the following box drawing characters:
++
+----
+│ ┃ ┆ ┇ ┊ ┋ ┌ ┍ ┎ ┏ └ ┕ ┖ ┗ ├ ┝ ┞ ┟ ┠ ┡ ┢ ┣ ╎ ╏ ║ ╒ ╓ ╔ ╘ ╙ ╚ ╞ ╟ ╠ ╽ ╿
+----
++
+This makes it possible to add tables and general boxes at the paragraph
+level (no special indentation).

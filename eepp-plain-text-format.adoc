@@ -1,0 +1,628 @@
+= **eepp**'s plain text format
+Philippe Proulx
+30 April 2024
+:toc: left
+
+This is a small guide that shows how I,
+https://eepp.ca/[Philippe Proulx], personally format structured text in
+a programming language block comment or in a Git commit message.
+
+== Motivation
+
+When you need to write an extensive multiline programming language
+comment or commit message, you want to structure the text with familiar
+elements found in rich, rendered text such as headings, paragraphs,
+lists, tables, and the rest.
+
+Given that comments in programming languages or commit messages aren't
+converted into formats like HTML or PDF, it's crucial that they look
+good and easy to read in their raw, plain text form.
+
+https://en.wikipedia.org/wiki/Markdown[Markdown] is almost there, but
+I'm tweaking it slightly, also drawing some inspiration from
+https://en.wikipedia.org/wiki/AsciiDoc[AsciiDoc].
+
+The main differences with Markdown are:
+
+<<headings>>::
+    Headings are easier to spot thanks to uppercase as well as
+    `═`{nbsp}(U+2550) and `─`{nbsp}(U+2500) underlines.
+
+<<ul,Unordered lists>>::
+    Items look nicer thanks to the `•`{nbsp}(U+2022) and
+    `‣`{nbsp}(U+25CB) bullets.
+
+<<dl>>::
+<<admonitions>>::
+    Don't exist in Markdown, but they do in AsciiDoc.
+
+<<tables>>::
+    Look nicer thanks to the
+    https://en.wikipedia.org/wiki/Box-drawing_character[Unicode box drawing characters].
+
+== Block comment
+
+This document outlines a format intended for text within a block comment
+or a commit message.
+
+Block comment syntax varies across different programming languages.
+However, the two main syntaxes I focus on are:
+
+C/{cpp}/Java style:: {empty}
++
+[source,c]
+----
+/*
+ * This is a block comment.
+ *
+ * It has more than one line.
+ *
+ * Each content line starts with `* `.
+ */
+----
+
+Bash/Python style:: {empty}
++
+[source,python]
+----
+# This is a block comment.
+#
+# It has more than one line.
+#
+# Each content line starts with `# `.
+----
+
+== Line length
+
+According to https://en.wikipedia.org/wiki/Line_length[Wikipedia]:
+
+> generally for printed text it is widely accepted that line lengths
+> fall between 45 and 75{nbsp}characters per line (cpl), though the
+> ideal is 66{nbsp}cpl (including letters and spaces)
+
+I like to keep comment lines under the 73th{nbsp}column when possible.
+
+== Text elements
+
+This section shows how to format the common structured text elements.
+
+[[headings]]
+=== Headings
+
+First level::
+    Underline the _uppercase_ title with `━`{nbsp}(U+2501):
++
+.First level heading.
+====
+----
+EFFECTIVE VERSION CONTROL
+━━━━━━━━━━━━━━━━━━━━━━━━━
+Effective version control is a fundamental aspect of modern software
+development, serving as a cornerstone for maintaining a coherent and
+efficient workflow. At its core, version control enables developers to
+track and manage changes to software code, ensuring that every
+modification is documented and retrievable.
+----
+====
+
+Second level::
+    Underline the title with `─`{nbsp}(U+2500):
++
+.Second level heading.
+====
+----
+Advanced features
+─────────────────
+Delving into the realm of advanced features unveils a plethora of
+sophisticated functionalities and tools designed to elevate user
+experience and efficiency to new heights.
+----
+====
+
+In both cases, write the next content line immediately after the
+underline.
+
+If you need more than two levels for a single block comment... you're
+out of luck!
+
+=== Paragraphs
+
+Use one or more consecutive lines, like in Markdown/AsciiDoc:
+
+.Two paragraphs.
+====
+----
+Giraffes, the tallest land animals on Earth, are renowned for their long
+necks and unique spotted coats. Native primarily to the savannas and
+woodlands of sub-Saharan Africa, these majestic creatures can reach
+heights of up to 18 feet (5.5 meters).
+
+Their height is an evolutionary adaptation that allows them to access
+leaves and buds in treetops that few other animals can reach, primarily
+feeding on the foliage of acacias.
+----
+====
+
+Use an empty line between paragraphs.
+
+=== Breaks
+
+Fill the whole effective line with `┄`{nbsp}(U+2504) between two empty
+lines:
+
+.Break.
+====
+----
+The historic town square is a charming place where locals and tourists
+gather, surrounded by quaint shops and cafes. It's a hub of cultural
+events, from lively street markets to festive parades.
+
+┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+
+In the world of technology, artificial intelligence continues to
+advance, revolutionizing industries and everyday life. From voice
+assistants to autonomous vehicles, AI is shaping the future in
+remarkable ways.
+----
+====
+
+.Break within a list item.
+====
+----
+To replace a bicycle tire:
+
+
+1. Flip bike, release brake, remove wheel.
+
+2. Use tire levers to remove the old tire from the rim.
+
+3. Check rim for damage; remove any debris.
+
+   ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+
+   Mike skipped a thorough rim check while changing his bike tire.
+   Overlooking a tiny metal shard, he confidently mounted and inflated
+   the new tire. However, minutes into his ride, a sharp hiss deflated
+   both the tire and his spirits. A detailed inspection could have
+   prevented the puncture and frustration.
+
+4. Place new tire partially on rim, insert tube, inflate slightly.
+
+5. Fit tire onto rim completely, inflate to recommended pressure.
+----
+====
+
+=== Emphasis
+
+Options:
+
+Use `_` or `*` around the text to emphasize::
++
+.Emphasis with `_`.
+====
+----
+Make sure to open the _first file_, otherwise [...]
+----
+====
+
+Use uppercase to emphasize short words::
++
+.Emphasis with uppercase.
+====
+----
+Make sure NOT to send more than two packets [...]
+----
+====
+
+Never break a line in the middle of some emphasized text.
+
+=== Literal text
+
+Use backticks (like in Markdown/AsciiDoc):
+
+.Literal text.
+====
+----
+The `_dataLen` variable below exists because [...]
+----
+====
+
+Never break a line in the middle of some literal text.
+
+[NOTE]
+====
+You may omit the backticks and append `()` to simple
+function/method names:
+
+----
+Either call read() or close() with `fd`, but never [...]
+----
+====
+
+=== Links
+
+Options:
+
+Reference style (preferred):: {empty}
++
+. Insert `[__x__]`, where `__x__` is an incrementing link ID within the
+  same block comment or commit message, after the relevant text.
+
+. Write the actual URL after `[__x__]:&nbsp;` at the end of the
+  comment/message, possibly under a "`Links`" or "`References`"
+  heading.
+
++
+.Link references.
+====
+----
+MOMENTS OF WONDER
+━━━━━━━━━━━━━━━━━
+The morning sun shone brightly over the bustling city [1], its warm rays
+reflecting off skyscrapers and filling the streets with a golden hue.
+People moved briskly, starting their day with a sense of purpose and
+energy, as the city awoke to endless possibilities.
+
+High atop a distant, rugged mountain [2], a lone eagle soared
+gracefully, its wings spread wide against the clear blue sky. Below, the
+vast landscape stretched out in a tapestry of forests, rivers, and
+meadows, all quietly observed from this majestic vantage point.
+
+LINKS
+━━━━━
+[1]: https://www.ville.sorel-tracy.qc.ca/
+[2]: https://skisaintbruno.ca/en/
+----
+====
+
+Direct URL::
+    Insert the URL directly into the text between `<` and `>`
+    (like in Markdown):
++
+.Direct URL link.
+====
+----
+Docker build is a foundational process in containerization, pivotal for
+creating Docker images from a Dockerfile (see
+<https://docs.docker.com/engine/reference/builder/>) and a context. The
+Dockerfile provides a set of instructions for building the image,
+specifying the base image to use, the files to include, and the commands
+to run.
+----
+====
+
+=== Unordered and ordered lists
+
+[[ul]] Unordered list::
+    Start an item with `•`{nbsp}(U+2022), `‣`{nbsp}(U+25CB), or any dash
+    codepoint (U+2043 is a nice one) followed with a single space:
++
+.Unordered list.
+====
+----
+You will need some:
+
+• Kale, a nutrient-rich leafy green vegetable, kale is packed with
+  vitamins A, K, and C.
+
+• Almond milk, a dairy-free alternative to traditional milk, almond milk
+  is low in calories and rich in vitamin E.
+
+• Greek yogurt, a thick, creamy yogurt with a rich source of protein and
+  probiotics.
+----
+====
+
+Ordered list::
+    Start an item with the `1.` (first level) or `a)` (second level)
+    format followed with a single space:
++
+.Ordered list.
+====
+----
+To change your oil:
+
+1. Warm up your car.
+2. Drain old oil.
+3. Replace oil filter.
+4. Add new oil.
+5. Check and clean up.
+----
+====
+
+In general:
+
+* _Don't_ indent a list, relative to the previous text element.
++
+====
+**Bad**:
+
+----
+To remove your chimney:
+
+    1. Set up scaffolding and safety measures.
+    2. Remove chimney structure from top down.
+    3. Seal roof hole with matching materials.
+    4. Repair interior structural damage.
+    5. Clean and dispose of debris.
+
+Make sure to [...]
+----
+
+**Good**:
+
+----
+To remove your chimney:
+
+1. Set up scaffolding and safety measures.
+2. Remove chimney structure from top down.
+3. Seal roof hole with matching materials.
+4. Repair interior structural damage.
+5. Clean and dispose of debris.
+
+Make sure to [...]
+----
+====
+
+* If any list item, for a given level, has more than one line, then
+  add an empty line between _each item_.
++
+====
+**Bad**:
+
+----
+• Kale.
+• Almond milk, a dairy-free alternative to traditional milk, almond milk
+  is low in calories and rich in vitamin E.
+• Greek yogurt.
+----
+
+**Good**:
+
+----
+• Kale.
+
+• Almond milk, a dairy-free alternative to traditional milk, almond milk
+  is low in calories and rich in vitamin E.
+
+• Greek yogurt.
+----
+====
+
+* Make sure to indent the content so that the beginnings of item lines
+  are vertically aligned with eachother.
+
+* When you need more than one level, vertically align the bullet or
+  number of the first nested item with the beginning of the content of
+  the previous line:
++
+.Many nested lists.
+====
+----
+You will need:
+
+‣ Kale, a nutrient-rich leafy green vegetable, kale is packed with
+  vitamins A, K, and C.
+
+  To prepare kale:
+
+  1. Rinse the leaves thoroughly under cold running water
+     to remove dirt.
+
+  2. Strip the leafy parts from the tougher stems and discard stems.
+
+  3. Chop the leaves into bite-sized pieces or tear them by hand:
+
+     a) Spread the washed kale leaves on a cutting board.
+
+     b) Fold each leaf in half lengthwise along the stem.
+
+     c) Use a sharp knife to slice along the stem.
+
+     d) Either:
+
+        • Chop the de-stemmed leaves into smaller pieces.
+        • Tear them by hand for a rustic look.
+
+  4. Sauté, steam, or massage with dressing for salads as desired.
+
+‣ Almond milk, a dairy-free alternative to traditional milk, almond milk
+  is low in calories and rich in vitamin E.
+
+‣ [...]
+----
+====
+
+[[dl]]
+=== Definition lists
+
+Write:
+
+. One or more definition terms on their own line, each one ending
+  with `:`.
++
+Add an empty line before the first term line.
+
+. The common definition, indented with four spaces.
+
+.Definition list.
+====
+----
+The decoder is in one of the following states:
+
+Open:
+    In that case, it's:
+
+    • Ready to receive and interpret data.
+    • Actively processing incoming signals or information.
+
+Closed:
+Has an error:
+    Not receiving or interpreting data and possibly unable to proceed
+    with normal operations.
+
+    The decoder might be experiencing a malfunction or issue
+    in processing.
+----
+====
+
+[[admonitions]]
+=== Admonitions
+
+Start the paragraph with one of:
+
+* `CAUTION:{nbsp}`
+* `IMPORTANT:{nbsp}`
+* `NOTE:{nbsp}`
+* `TIP:{nbsp}`
+* `WARNING:{nbsp}`
+
+.Single-paragraph admonition.
+====
+----
+The sunsets over the tranquil ocean are a sight to behold, painting the
+sky in breathtaking hues of orange and pink. The gentle waves lap at the
+shore, creating a soothing rhythm that lulls beachgoers into a state of
+relaxation.
+
+IMPORTANT: Be aware of the changing tides and strong currents that can
+swiftly turn a peaceful day at the beach into a dangerous situation.
+Before taking a dip, make sure to check the local tide schedules and
+swim in designated areas with lifeguards present.
+
+By staying informed and exercising caution, you can ensure a safe and
+enjoyable beach experience for yourself and your loved ones.
+----
+====
+
+You may also draw a box using
+https://en.wikipedia.org/wiki/Box-drawing_character[Unicode box drawing
+characters] to add emphasis or to use multiple paragraphs:
+
+.Admonition with multiple paragraphs.
+====
+----
+The sunsets over the tranquil ocean are a sight to behold, painting the
+sky in breathtaking hues of orange and pink. The gentle waves lap at the
+shore, creating a soothing rhythm that lulls beachgoers into a state of
+relaxation.
+
+┌────────────────────────────────────────────────────────────────────┐
+│ IMPORTANT: Be aware of the changing tides and strong currents that │
+│ can swiftly turn a peaceful day at the beach into a dangerous      │
+│ situation.                                                         │
+│                                                                    │
+│ Before taking a dip, make sure to check the local tide             │
+│ schedules and swim in designated areas with lifeguards present.    │
+└────────────────────────────────────────────────────────────────────┘
+
+By staying informed and exercising caution, you can ensure a safe and
+enjoyable beach experience for yourself and your loved ones.
+----
+====
+
+=== Blockquotes
+
+Use any of the text elements of this document, but prefix each line with
+`>{nbsp}` (like in Markdown), even empty ones if they're part of the
+same quote:
+
+.Blockquote.
+====
+----
+It has been said:
+
+> Regular oil changes are essential for maintaining the health and
+> longevity of your engine.
+>
+> In this procedure, we will walk you through the necessary steps to
+> ensure a smooth and effective oil change process:
+>
+> 1. Warm up your car.
+> 2. Drain old oil.
+> 3. Replace oil filter.
+> 4. Add new oil.
+> 5. Check and clean up.
+
+That being said, I think the above procedure lacks details.
+----
+====
+
+[[code]]
+=== Source code blocks
+
+Indenting each line with four spaces (like in Markdown):
+
+.Source code block.
+====
+----
+With this function, the following code WILL leak:
+
+    auto c = get_more(&stuff);
+
+    if (c && c->has_val()) {
+        stuff->apply(*c);
+    }
+
+Therefore, don't call the apply() method like this.
+----
+====
+
+[[tables]]
+=== Tables
+
+Use the
+https://en.wikipedia.org/wiki/Box-drawing_character[Unicode box drawing characters]
+to draw eye-pleasing tables:
+
+.Table.
+====
+----
+╔════════════╤═════════╤════════════╗
+║ Good       │ Average │ Bad        ║
+╠════════════╪═════════╪════════════╣
+║ Orange     │ Lemon   │ Strawberry ║
+║ Cherry     │ Grape   │ Pineapple  ║
+║ Watermelon │ Mango   │ Lychee     ║
+║ Apricot    │ Guava   │ Kiwi       ║
+╚════════════╧═════════╧════════════╝
+----
+====
+
+Yes this is tedious, but you'll draw it once while many people will look
+at it many times.
+
+TIP: You may use online Unicode table drawing tools such as
+https://ozh.github.io/ascii-tables/[ASCII Table Generator] with the
+"`Unicode`" output style.
+
+=== Diagrams
+
+Of course you can't embed an image in plain text, but try to make the
+most of what Unicode offers (for example,
+https://en.wikipedia.org/wiki/Box-drawing_character[box drawing characters]
+and
+https://en.wikipedia.org/wiki/Geometric_Shapes_(Unicode_block)[geometric shapes])
+to draw a diagram that can help the reader understand.
+
+Indent any diagram with four spaces, like a <<code,source code block>>:
+
+.Textual diagram.
+====
+----
+The following illustration shows the meaning of the significant decoding
+members in relation to a packet and a current buffer:
+
+    ╔═══════════════════════════════════════════════════════════════════════════╗
+    ║                                          Decoding head                    ║
+    ║                                          ▼                                ║
+    ║ Packet: ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ ║
+    ║ Buffer: ┊                         ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓          ┊ ║
+    ║         ┊                         ┊      ┊                   ┊          ┊ ║
+    ║         ┣┅┅ _mBufOffsetInCurPkt ┅┅┫      ┊                   ┊          ┊ ║
+    ║         ┣┅┅┅┅┅ _mHeadOffsetInCurPkt ┅┅┅┅┅┫                   ┊          ┊ ║
+    ║         ┊                         ┣┅┅┅┅┅┅ _mBuf.size() ┅┅┅┅┅┅┫          ┊ ║
+    ║         ┣┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ _mCurPktExpectedLens.total ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┫ ║
+    ╚═══════════════════════════════════════════════════════════════════════════╝
+----
+====
