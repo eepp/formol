@@ -32,6 +32,10 @@ This module offers the simple `format()` function as well as the
 `format_c_block_comment()` and `format_prefixed_block_comment()` helpers
 to reformat C/{cpp} or prefixed block comments.
 
+ifdef::env-github[]
+toc::[]
+endif::env-github[]
+
 == Overview
 
 The goal of Formol is to convert a <<cheats,cheated>> version of
