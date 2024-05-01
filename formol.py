@@ -626,7 +626,7 @@ class _Parser:
     def _try_parse_ol(self):
         return self._try_parse_simple_list(_Ol, self._try_parse_ol_item)
 
-    _literal_pat = re.compile(r'`[^`]*`')
+    _literal_pat = re.compile(r'`[^`]*`\S*')
     _word_pat = re.compile(r'(.+?)(?=[` ]|$)')
 
     # Converts a paragraph text to a paragraph element containing
