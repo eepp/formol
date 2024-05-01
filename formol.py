@@ -1197,7 +1197,7 @@ def format_c_block_comment(comment: str, start_col: int = 0,
     # create and return final comment
     new_comment_lines = ['/*']
     indent_str = _indent_str(start_col)
-    new_comment_lines += list(map(lambda rline: f'{indent_str} * {rline}',
+    new_comment_lines += list(map(lambda rline: f'{indent_str} * {rline}'.rstrip(),
                                   new_content_lines))
     new_comment_lines.append(f'{indent_str} */')
     return '\n'.join(new_comment_lines)
@@ -1254,6 +1254,6 @@ def format_prefixed_block_comment(comment: str, start_col: int = 0,
     # create and return final comment
     new_comment_lines: List[str] = []
     indent_str = _indent_str(start_col)
-    new_comment_lines += list(map(lambda rline: f'{indent_str}{prefix}{rline}',
+    new_comment_lines += list(map(lambda rline: f'{indent_str}{prefix}{rline}'.rstrip(),
                                   new_content_lines))
     return '\n'.join(new_comment_lines)
