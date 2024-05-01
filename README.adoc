@@ -18,7 +18,7 @@ Philippe Proulx
 image:https://img.shields.io/pypi/v/formol.svg?label=Latest%20version[link="https://pypi.python.org/pypi/formol"]
 
 [.lead]
-_**Formol**_ is a Python package which helps format a cheated version
+_**Formol**_ is a Python module which helps format a cheated version
 of
 https://0x3b.org/files/eepp-plain-text-format.html[eepp's plain text format]
 to the real thing.
@@ -28,7 +28,7 @@ as to quickly convert an ordinary programming language block comment, a
 Git commit message, or a plain text email message to some visually
 appealing and readable text.
 
-This package offers the simple `format()` function as well as the
+This module offers the simple `format()` function as well as the
 `format_c_block_comment()` and `format_prefixed_block_comment()` helpers
 to reformat C/{cpp} or prefixed block comments.
 
@@ -330,8 +330,8 @@ to the User Site] to learn more about a user site installation.
 
 [NOTE]
 ====
-Formol has a single module file, `formol.py`, which you can copy as is
-to your project to use it.
+Formol is a single module file, `formol.py`, which you can copy as is to
+your project to use it.
 
 `formol.py` has _no external dependencies_.
 ====
