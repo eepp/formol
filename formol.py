@@ -883,9 +883,13 @@ class _Formatter:
 
         return lines
 
+    @staticmethod
+    def _p_line_list_len(lst: List[str]):
+        return sum([len(t) for t in lst])
+
     # Returns the lines of the paragraph `p`.
     def _p_lines(self, p: _P):
-        lines: List[str] = ['']
+        lines: List[List[str]] = [[]]
 
         # append each word, wrapping when necessary
         for word in p.words:
@@ -893,20 +897,30 @@ class _Formatter:
 
             if len(lines[-1]) == 0:
                 # first word of the line, in case it doesn't fit
-                lines[-1] += to_append
-            elif len(lines[-1]) + len(word) > self._max_line_len:
+                lines[-1].append(to_append)
+            elif self._p_line_list_len(lines[-1]) + len(word) > self._max_line_len:
                 # new line
-                lines.append(to_append)
+                lines.append([to_append])
             else:
                 # append to current line
-                lines[-1] += to_append
+                lines[-1].append(to_append)
+
+        # avoid runt: if there are at least two lines and the last line
+        # contains a single word when two would fit, then just do it:
+        # this is more readable than a single word on the last line
+        if len(lines) >= 2 and len(lines[-1]) == 1 and len(lines[-2][-1]) + len(lines[-1][0]) - 1 <= self._max_line_len:
+            lines[-1] = [lines[-2][-1], lines[-1][0]]
+            del lines[-2][-1]
+
+        # convert to real lines
+        new_lines = list(map(lambda words: ''.join(words), lines))
 
         # remove trailing empty lines
-        lines = _remove_trailing_empty_lines(lines)
+        new_lines = _remove_trailing_empty_lines(new_lines)
 
         # append final empty line and return lines
-        lines.append('')
-        return lines
+        new_lines.append('')
+        return new_lines
 
     # Returns the lines of the unordered list item `item`.
     def _ul_item_lines(self, item: _SimpleListItem):

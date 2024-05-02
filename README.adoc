@@ -13,6 +13,7 @@ endif::env-github[]
 
 = Formol
 Philippe Proulx
+2 May 2024
 
 [.normal]
 image:https://img.shields.io/pypi/v/formol.svg?label=Latest%20version[link="https://pypi.python.org/pypi/formol"]
@@ -147,7 +148,6 @@ If this whole string is named `str`, then the result of
 `formol.format_c_block_comment(str)` (72{nbsp}columns by default) is:
 
 ----
-
 /*
  * QUÉBEC POUTINE
  * ━━━━━━━━━━━━━━
@@ -172,8 +172,8 @@ If this whole string is named `str`, then the result of
  * Ingredients
  * ───────────
  * Fries:
- *     Thick-cut fries that are crispy on the outside and soft on the
- *     inside.
+ *     Thick-cut fries that are crispy on the outside and soft on
+ *     the inside.
  *
  * Cheese Curds:
  *     Fresh, squeaky cheese curds are essential.
@@ -206,8 +206,8 @@ If this whole string is named `str`, then the result of
  *    a) Wash and peel the potatoes.
  *
  *       ┌────────────────────────────────────────────────────────────┐
- *       │ CAUTION: Peeling potatoes can be risky if not done         │
- *       │ cautiously.                                                │
+ *       │ CAUTION: Peeling potatoes can be risky if not              │
+ *       │ done cautiously.                                           │
  *       │                                                            │
  *       │ Using sharp peelers or knives can lead to cuts, especially │
  *       │ when tools slip on the slick surface of a potato.          │
@@ -224,8 +224,8 @@ If this whole string is named `str`, then the result of
  *       │ This poses additional health risks.                        │
  *       └────────────────────────────────────────────────────────────┘
  *
- *    b) Cut the potatoes into thick strips, approximately 1/2 inch
- *       wide.
+ *    b) Cut the potatoes into thick strips, approximately 1/2
+ *       inch wide.
  *
  *    c) Soak the potato strips in cold water for at least an hour to
  *       remove excess starch, then drain and pat dry.
@@ -241,8 +241,8 @@ If this whole string is named `str`, then the result of
  *
  * 3. Sprinkle fresh cheese curds over the hot fries.
  *
- * 4. Pour hot gravy over the fries and cheese curds to melt the cheese
- *    slightly.
+ * 4. Pour hot gravy over the fries and cheese curds to melt the
+ *    cheese slightly.
  *
  * Variations
  * ──────────
@@ -250,8 +250,8 @@ If this whole string is named `str`, then the result of
  *     The original recipe with just fries, cheese curds, and gravy.
  *
  * Meat lovers poutine:
- *     Includes additional toppings like pulled pork, bacon, or smoked
- *     meat.
+ *     Includes additional toppings like pulled pork, bacon, or
+ *     smoked meat.
  *
  * Veggie poutine:
  *     Uses mushroom or vegetable-based gravy and might include other
@@ -261,8 +261,8 @@ If this whole string is named `str`, then the result of
  * ─────────────────────────
  * Poutine is more than just a dish; it's a cultural icon in Québec. It
  * embodies the joie de vivre of the Québécois people and is enjoyed in
- * many settings, from fast food restaurants to fine dining
- * establishments.
+ * many settings, from fast food restaurants to fine
+ * dining establishments.
  *
  * Conclusion
  * ──────────
@@ -285,8 +285,8 @@ Preparation steps
 
 2. Sprinkle fresh cheese curds over the hot fries.
 
-3. Pour hot gravy over the fries and cheese curds to melt the cheese
-   slightly.
+3. Pour hot gravy over the fries and cheese curds to melt the
+   cheese slightly.
 ----
 
 You may change the heading add a list item as such:
@@ -299,8 +299,8 @@ Arrangement
 
 2. Sprinkle fresh cheese curds over the hot fries.
 
-3. Pour hot gravy over the fries and cheese curds to melt the cheese
-   slightly.
+3. Pour hot gravy over the fries and cheese curds to melt the
+   cheese slightly.
 ----
 
 Then the new result is:
@@ -314,8 +314,8 @@ Arrangement
 
 3. Sprinkle fresh cheese curds over the hot fries.
 
-4. Pour hot gravy over the fries and cheese curds to melt the cheese
-   slightly.
+4. Pour hot gravy over the fries and cheese curds to melt the
+   cheese slightly.
 ----
 
 == Install Formol
@@ -472,8 +472,8 @@ becomes
 • Bacon ipsum dolor amet bacon shoulder bresaola meatloaf kielbasa.
   Spare ribs capicola pastrami, hamburger.
 
-• Drumstick spare ribs doner filet mignon beef porchetta shankle
-  chicken.
+• Drumstick spare ribs doner filet mignon beef porchetta
+  shankle chicken.
 
   Alcatra ground round pork loin ham hock tenderloin chicken rump jowl.
   Sausage andouille ribeye turkey.
@@ -503,8 +503,8 @@ For example:
 
 ----
 • Bacon ipsum dolor amet bacon shoulder bresaola
-  meatloaf kielbasa. Spare ribs capicola pastrami,
-  hamburger.
+  meatloaf kielbasa. Spare ribs capicola
+  pastrami, hamburger.
 
 • Drumstick spare ribs doner filet mignon beef
   porchetta shankle chicken.
@@ -548,8 +548,8 @@ becomes
 1. Bacon ipsum dolor amet bacon shoulder bresaola meatloaf kielbasa.
    Spare ribs capicola pastrami, hamburger.
 
-2. Drumstick spare ribs doner filet mignon beef porchetta shankle
-   chicken.
+2. Drumstick spare ribs doner filet mignon beef porchetta
+   shankle chicken.
 
    Alcatra ground round pork loin ham hock tenderloin chicken rump jowl.
    Sausage andouille ribeye turkey.
@@ -574,8 +574,8 @@ For example:
 
 ----
 1. Bacon ipsum dolor amet bacon shoulder bresaola
-   meatloaf kielbasa. Spare ribs capicola pastrami,
-   hamburger.
+   meatloaf kielbasa. Spare ribs capicola
+   pastrami, hamburger.
 
 2. Drumstick spare ribs doner filet mignon beef
    porchetta shankle chicken.
@@ -685,8 +685,8 @@ becomes
 ----
 ┌────────────────────────────────────────────────────────────────────┐
 │ IMPORTANT: Be aware of the changing tides and strong currents that │
-│ can swiftly turn a peaceful day at the beach into a dangerous      │
-│ situation.                                                         │
+│ can swiftly turn a peaceful day at the beach into a                │
+│ dangerous situation.                                               │
 │                                                                    │
 │ Before taking a dip, make sure to check the local tide             │
 │ schedules and swim in designated areas with lifeguards present.    │
