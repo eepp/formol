@@ -1215,7 +1215,7 @@ def format_c_block_comment(comment: str, start_col: int = 0,
 
     # format contents of comment
     new_content_lines = _Formatter(_Parser(content_lines).elems,
-                                   max_line_len - 3).lines
+                                   max_line_len - start_col - 3).lines
 
     # create and return final comment
     new_comment_lines = ['/*']
@@ -1272,7 +1272,7 @@ def format_prefixed_block_comment(comment: str, start_col: int = 0,
 
     # format contents of comment
     new_content_lines = _Formatter(_Parser(content_lines).elems,
-                                   max_line_len - len(prefix)).lines
+                                   max_line_len - start_col - len(prefix)).lines
 
     # create and return final comment
     new_comment_lines: List[str] = []
