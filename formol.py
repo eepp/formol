@@ -21,6 +21,15 @@
 #
 # pyright: strict
 
+__all__ = [
+    'format',
+    'format_c_block_comment',
+    'format_prefixed_block_comment',
+]
+__version__ = '0.5.0'
+__author__ = 'Philippe Proulx <eepp.ca>'
+
+
 from typing import Dict, Any, Type, TypeVar, Callable, List, Sequence, Union, Pattern, Match, Optional
 from dataclasses import dataclass
 import re
