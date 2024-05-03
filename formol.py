@@ -1059,7 +1059,7 @@ class _Formatter:
 
     # Returns the lines of the verbatim block `verbatim`.
     def _verbatim_lines(self, verbatim: _Verbatim):
-        return verbatim.lines.copy()
+        return verbatim.lines.copy() + ['']
 
     # Returns the lines of a break.
     def _hr_lines(self, _: _Hr):
