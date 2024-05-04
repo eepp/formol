@@ -748,7 +748,7 @@ class _Parser:
         if lines is not None:
             return _Blockquote(_Parser(lines).elems)
 
-    _verbatim_line_pat = re.compile(r'^(?: *\[\d+\]: [hf]|[│┃┆┇┊┋┌┍┎┏└┕┖┗├┝┞┟┠┡┢┣╎╏║╒╓╔╘╙╚╞╟╠╽╿]).+')
+    _verbatim_line_pat = re.compile(r'^(?: *\[\d+\]: +[hf]|[│┃┆┇┊┋┌┍┎┏└┕┖┗├┝┞┟┠┡┢┣╎╏║╒╓╔╘╙╚╞╟╠╽╿])')
 
     # Tries to parse a verbatim block.
     def _try_parse_verbatim(self):
