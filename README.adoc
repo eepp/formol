@@ -13,7 +13,7 @@ endif::env-github[]
 
 = Formol
 Philippe Proulx
-2 May 2024
+4 May 2024
 
 [.normal]
 image:https://img.shields.io/pypi/v/formol.svg?label=Latest%20version[link="https://pypi.python.org/pypi/formol"]
@@ -806,3 +806,12 @@ Formol ignores some input lines, keeping them as is, namely:
 +
 This makes it possible to add tables and general boxes at the paragraph
 level (no special indentation).
+
+== Tests
+
+To run the tests:
+
+```
+$ poetry install
+$ poetry run pytest
+```

@@ -42,5 +42,8 @@ packages = [{include = 'formol.py'}]
 [tool.poetry.dependencies]
 python = '^3.8'
 
+[tool.poetry.dev-dependencies]
+pytest = '*'
+
 [tool.poetry.urls]
 'Bug tracker' = 'https://github.com/eepp/formol/issues/'
