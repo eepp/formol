@@ -289,7 +289,7 @@ Preparation steps
    cheese slightly.
 ----
 
-You may change the heading add a list item as such:
+You may change the heading and add a list item as such:
 
 ----
 Arrangement
