@@ -26,7 +26,7 @@ __all__ = [
     'format_c_block_comment',
     'format_prefixed_block_comment',
 ]
-__version__ = '0.8.0'
+__version__ = '0.9.0'
 __author__ = 'Philippe Proulx <eepp.ca>'
 
 
