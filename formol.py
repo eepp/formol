@@ -595,7 +595,7 @@ class _Parser:
     #     c) Meow Mix.
     def _try_parse_ol_item(self):
         # item start?
-        num_m = self._match_cur_line(r'^((?: *\d+)?\. |[a-z]\) )(\S.*)')
+        num_m = self._match_cur_line(r'^((?: *\d+)?\. +|[a-z]\) +)(\S.*)')
 
         if not num_m:
             # no item
@@ -682,7 +682,7 @@ class _Parser:
 
         while not self._is_done:
             if (self._cur_line_is_empty or self._match_cur_line(self._bullet_line_pat) or
-                                           self._match_cur_line(r'^\. \S.*')):
+                                           self._match_cur_line(r'^\. +\S')):
                 # empty line or list item beginning: end of paragraph
                 break
 

@@ -13,7 +13,7 @@ endif::env-github[]
 
 = Formol
 Philippe Proulx
-4 May 2024
+6 May 2024
 
 [.normal]
 image:https://img.shields.io/pypi/v/formol.svg?label=Latest%20version[link="https://pypi.python.org/pypi/formol"]
@@ -530,7 +530,7 @@ For example:
   Alcatra ground round pork loin ham hock tenderloin chicken rump jowl. Sausage andouille ribeye turkey.
 
   . Pastrami rump short.
-  . Prosciutto jowl alcatra.
+  .  Prosciutto jowl alcatra.
   . Leberkas tri-tip brisket.
 
 . Sirloin swine turkey fatback prosciutto t-bone tongue short:
@@ -583,10 +583,10 @@ For example:
    Alcatra ground round pork loin ham hock tenderloin
    chicken rump jowl. Sausage andouille ribeye turkey.
 
-   a) Pastrami rump short.
+   a)  Pastrami rump short.
    b) Prosciutto jowl alcatra.
    . Tongue meatball frankfurter strip.
-   c) Leberkas tri-tip brisket.
+   d) Leberkas tri-tip brisket.
 
 . Landjaeger doner ribeye, turkey shoulder
   pancetta beef.
