@@ -125,6 +125,12 @@ class _Verbatim(_Elem):
     lines: List[str]
 
 
+# Git trailer block.
+@dataclass(frozen=True)
+class _Trailers(_Elem):
+    lines: List[str]
+
+
 # Returns `lines` without trailing empty lines.
 #
 # `lines` must not be empty.
@@ -669,6 +675,8 @@ class _Parser:
 
         return _P(elems)
 
+    _trailer_line_pat = re.compile(r'^[A-Za-z0-9_][A-Za-z0-9_-]*: \S')
+
     # Tries to parse a paragraph.
     #
     # Example:
@@ -677,7 +685,10 @@ class _Parser:
     #     meditation. Hammock succulents godard kogi air plant Brooklyn
     #     pickled. Tofu disrupt poke four loko cronut sus shaman hell of
     #     food truck praxis wolf paleo fam.
-    def _try_parse_p(self):
+    #
+    # If all the lines of the paragraph look like Git trailer lines,
+    # then returns a `_Trailers` instance to preserve them instead.
+    def _try_parse_p_or_trailers(self):
         lines: List[str] = []
 
         while not self._is_done:
@@ -690,6 +701,10 @@ class _Parser:
             self._goto_next_line()
 
         if len(lines) >= 1:
+            # if all lines look like Git trailers, keep them as is
+            if all(self._trailer_line_pat.match(line) for line in lines):
+                return _Trailers(lines)
+
             # join lines with a single space
             return self._p_elem_from_text(' '.join(lines))
 
@@ -843,7 +858,7 @@ class _Parser:
             self._try_parse_admon_box_delim,
             self._try_parse_admon_box,
             self._try_parse_verbatim,
-            self._try_parse_p,
+            self._try_parse_p_or_trailers,
         ]
 
         while True:
@@ -1061,6 +1076,10 @@ class _Formatter:
     def _verbatim_lines(self, verbatim: _Verbatim):
         return verbatim.lines.copy() + ['']
 
+    # Returns the lines of the Git trailer block `trailers`.
+    def _trailers_lines(self, trailers: _Trailers):
+        return trailers.lines.copy() + ['']
+
     # Returns the lines of a break.
     def _hr_lines(self, _: _Hr):
         return ['┄' * (self._max_line_len), '']
@@ -1133,6 +1152,7 @@ class _Formatter:
             _Blockquote: self._blockquote_lines,
             _Verbatim: self._verbatim_lines,
             _AdmonBox: self._admon_box_lines,
+            _Trailers: self._trailers_lines,
         }
 
         return funcs[type(elem)](elem)

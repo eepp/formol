@@ -1,0 +1,21 @@
+Signed-off-by: Alice <alice@example.com>
+Co-authored-by: Bob <bob@example.com>
+Acked-by: Carol <carol@example.com>
+Tested-by: Dave <dave@example.com>
+Fixes: abc123
+Closes: #42
+Change-Id: I0123456789abcdef
+Bug-Tracker-Id: 12345
+Some_Underscore_Token: value here
+X-Custom-Header: yes
+---
+Signed-off-by: Alice <alice@example.com>
+Co-authored-by: Bob <bob@example.com>
+Acked-by: Carol <carol@example.com>
+Tested-by: Dave <dave@example.com>
+Fixes: abc123
+Closes: #42
+Change-Id: I0123456789abcdef
+Bug-Tracker-Id: 12345
+Some_Underscore_Token: value here
+X-Custom-Header: yes

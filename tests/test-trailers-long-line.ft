@@ -1,0 +1,5 @@
+Reviewed-by: A Very Long Reviewer Name With Several Words <very.long.email.address@some.example.org>
+Fixes: https://example.com/very/long/url/that/exceeds/the/maximum/line/length/easily
+---
+Reviewed-by: A Very Long Reviewer Name With Several Words <very.long.email.address@some.example.org>
+Fixes: https://example.com/very/long/url/that/exceeds/the/maximum/line/length/easily

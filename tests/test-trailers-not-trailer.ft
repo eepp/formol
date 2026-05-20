@@ -1,0 +1,7 @@
+Foo:bar means something about the configuration
+of the project, but this is not a trailer line
+because there is no space after the colon character.
+---
+Foo:bar means something about the configuration of the project, but this
+is not a trailer line because there is no space after the
+colon character.
