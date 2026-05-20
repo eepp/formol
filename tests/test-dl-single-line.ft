@@ -1,0 +1,12 @@
+Online:: Available on or performed using the internet.
+Offline:: Not connected to the internet.
+Half-open:: Currently transitioning between states.
+---
+Online:
+    Available on or performed using the internet.
+
+Offline:
+    Not connected to the internet.
+
+Half-open:
+    Currently transitioning between states.

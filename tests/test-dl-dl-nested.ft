@@ -1,0 +1,29 @@
+Decoder states:
+    The decoder can be in one of these states:
+
+    Open:
+        Ready to receive and interpret data, actively processing incoming signals or information from connected sources.
+
+    Closed:
+        Not receiving or interpreting data and possibly unable to proceed with normal operations.
+
+    The decoder always starts in the open state.
+
+Encoder states:
+    Similar to the decoder but for outgoing data.
+---
+Decoder states:
+    The decoder can be in one of these states:
+
+    Open:
+        Ready to receive and interpret data, actively processing
+        incoming signals or information from connected sources.
+
+    Closed:
+        Not receiving or interpreting data and possibly unable to
+        proceed with normal operations.
+
+    The decoder always starts in the open state.
+
+Encoder states:
+    Similar to the decoder but for outgoing data.
