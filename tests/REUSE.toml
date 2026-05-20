@@ -1,0 +1,7 @@
+version = 1
+
+[[annotations]]
+path = "*.ft"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2024-2026 Philippe Proulx <eepp.ca>"
+SPDX-License-Identifier = "CC0-1.0"

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2024 Philippe Proulx <eepp.ca>
+# SPDX-License-Identifier: CC0-1.0
+
 *.html
 
 # Byte-compiled / optimized / DLL files

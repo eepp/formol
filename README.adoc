@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024 Philippe Proulx <eepp.ca>
+// SPDX-License-Identifier: MIT
+
 ifdef::env-github[]
 :toc: macro
 endif::env-github[]

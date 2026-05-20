@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025 Philippe Proulx <eepp.ca>
+// SPDX-License-Identifier: CC-BY-4.0
+
 = **eepp**'s plain text format
 Philippe Proulx
 7 November 2025
