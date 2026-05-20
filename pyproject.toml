@@ -3,7 +3,7 @@
 
 [project]
 name = 'formol'
-version = '0.10.1'
+version = '0.10.2'
 description = 'Plain text beautifier'
 readme = {file = 'README.adoc', content-type = 'text/plain'}
 license = 'MIT'

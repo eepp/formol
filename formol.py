@@ -8,7 +8,7 @@ __all__ = [
     'format_c_block_comment',
     'format_prefixed_block_comment',
 ]
-__version__ = '0.10.1'
+__version__ = '0.10.2'
 __author__ = 'Philippe Proulx <eepp.ca>'
 
 
