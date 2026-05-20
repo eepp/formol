@@ -8,13 +8,17 @@ __all__ = [
     'format_c_block_comment',
     'format_prefixed_block_comment',
 ]
-__version__ = '0.9.0'
-__author__ = 'Philippe Proulx <eepp.ca>'
-
 
 from typing import Dict, Any, Type, TypeVar, Callable, List, Sequence, Union, Pattern, Match, Optional
 from dataclasses import dataclass
+import importlib.metadata
 import re
+
+
+_meta = importlib.metadata.metadata(__name__)
+__version__ = _meta['Version']
+__author__ = _meta['Author-email']
+del _meta
 
 
 # Element base.
