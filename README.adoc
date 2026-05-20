@@ -815,6 +815,6 @@ level (no special indentation).
 To run the tests:
 
 ```
-$ poetry install
-$ poetry run pytest
+$ uv sync
+$ uv run pytest
 ```
