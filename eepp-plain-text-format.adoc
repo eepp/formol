@@ -1,6 +1,6 @@
 = **eepp**'s plain text format
 Philippe Proulx
-30 April 2024
+7 November 2025
 :toc: left
 
 This is a small guide that shows how I,
@@ -26,7 +26,7 @@ The main differences with Markdown are:
 
 <<headings>>::
     Headings are easier to spot thanks to uppercase as well as
-    `═`{nbsp}(U+2550) and `─`{nbsp}(U+2500) underlines.
+    `━`{nbsp}(U+2501) and `─`{nbsp}(U+2500) underlines.
 
 <<ul,Unordered lists>>::
     Items look nicer thanks to the `•`{nbsp}(U+2022) and
@@ -626,3 +626,9 @@ members in relation to a packet and a current buffer:
     ╚═══════════════════════════════════════════════════════════════════════════╝
 ----
 ====
+
+See those awesome tools:
+
+* https://asciiflow.com/[ASCIIFlow]
+* https://meatfighter.com/ascii-silhouettify/[ASCII Silhouettify]
+* https://monodraw.helftone.com/[Monodraw] (for macOS, not free)
