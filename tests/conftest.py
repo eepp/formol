@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Philippe Proulx <eepp.ca>
+# Copyright (c) 2024-2026 Philippe Proulx <eepp.ca>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -19,35 +19,33 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import re
 import pytest
 import formol
 
 
 def pytest_collect_file(parent, file_path):
     ext = '.ft'
+    prefix = 'test-'
 
-    if file_path.suffix != ext:
-        # not a Formol test file: cancel
-        return
+    if file_path.suffix != ext or not file_path.stem.startswith(prefix):
+        return None
 
-    # create the file node
-    return _FormolTestFile.from_parent(parent, path=file_path,
-                                       name=f'test{file_path.name[4:].replace(ext, "")}')
+    name = f'test-{file_path.stem[len(prefix):]}'
+    return _FormolTestFile.from_parent(parent, path=file_path, name=name)
 
 
 def _split_ft_file(path):
     formol_lines = []
     expected_lines = []
-    cur_lines = formol_lines
+    in_expected = False
 
-    with open(path) as f:
+    with open(path, encoding='utf-8') as f:
         for line in f:
-            if line.rstrip() == '---' and len(expected_lines) == 0:
-                cur_lines = expected_lines
+            if not in_expected and line.rstrip() == '---':
+                in_expected = True
                 continue
 
-            cur_lines.append(line)
+            (expected_lines if in_expected else formol_lines).append(line)
 
     return ''.join(formol_lines), ''.join(expected_lines).rstrip()
 
@@ -62,10 +60,5 @@ class _FormolTestItem(pytest.Item):
 
 
 class _FormolTestFile(pytest.File):
-    def __init__(self, name, **kwargs):
-        super().__init__(**kwargs)
-        self._name = name
-
     def collect(self):
-        # yield a single item
-        yield _FormolTestItem.from_parent(self, name=self._name)
+        yield _FormolTestItem.from_parent(self, name=self.name)
