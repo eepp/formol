@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Philippe Proulx <eepp.ca>
+# Copyright (c) 2024-2026 Philippe Proulx <eepp.ca>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -19,31 +19,34 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-[build-system]
-requires = ['poetry-core']
-build-backend = 'poetry.core.masonry.api'
-
-[tool.poetry]
+[project]
 name = 'formol'
 version = '0.9.0'
 description = 'Plain text beautifier'
+readme = {file = 'README.adoc', content-type = 'text/plain'}
 license = 'MIT'
-authors = ['Philippe Proulx <eeppeliteloop@gmail.com>']
-repository = 'https://github.com/eepp/formol/'
+authors = [{name = 'Philippe Proulx', email = 'eeppeliteloop@gmail.com'}]
+requires-python = '>=3.9'
 classifiers = [
-	'Development Status :: 4 - Beta',
-	'License :: OSI Approved :: MIT License',
+    'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
     'Operating System :: OS Independent',
     'Topic :: Software Development :: Documentation',
 ]
-packages = [{include = 'formol.py'}]
 
-[tool.poetry.dependencies]
-python = '^3.8'
-
-[tool.poetry.dev-dependencies]
-pytest = '*'
-
-[tool.poetry.urls]
+[project.urls]
+Repository = 'https://github.com/eepp/formol/'
 'Bug tracker' = 'https://github.com/eepp/formol/issues/'
+
+[build-system]
+requires = ['hatchling']
+build-backend = 'hatchling.build'
+
+[dependency-groups]
+dev = ['pytest']
+
+[tool.hatch.build.targets.wheel]
+only-include = ['formol.py']
+
+[tool.hatch.build.targets.sdist]
+include = ['formol.py', 'README.adoc', 'tests']
