@@ -16,7 +16,7 @@ endif::env-github[]
 
 = Formol
 Philippe Proulx
-6 May 2024
+26 October 2026
 
 [.normal]
 image:https://img.shields.io/pypi/v/formol.svg?label=Latest%20version[link="https://pypi.python.org/pypi/formol"]
@@ -423,6 +423,27 @@ distillery sus forage mlkshk irony helvetica, listicle hoodie.
 
 Note how there's no line break in the middle of a literal string
 (between backticks).
+
+=== Non-breaking space
+
+Outside a literal string (between backticks), Formol converts `~~` to
+a non-breaking space (pass:[U+00A0]) so that no line break occurs there.
+
+----
+Formol requires Python~~3, but `a~~b` stays as is.
+----
+
+becomes
+
+----
+Formol requires Python␣3, but `a~~b` stays as is.
+----
+
+where `␣` `Python` and `3` is pass:[U+00A0].
+
+This works within paragraphs (including list items, blockquotes,
+admonition boxes, and definitions), headings, and definition list terms,
+but not within preformatted text.
 
 === Break
 

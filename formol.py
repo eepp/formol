@@ -139,6 +139,16 @@ def _indent_str(count: int, tab_width: Optional[int] = None):
     return '\t' * (count // tab_width) + ' ' * (count % tab_width)
 
 
+_NBSP = '\u00a0'
+_nbsp_pat = re.compile(r'(`[^`]*`)|~~')
+
+
+# Returns `text` with each `~~` outside a literal (between backticks)
+# replaced with a non-breaking space.
+def _convert_nbsp(text: str):
+    return _nbsp_pat.sub(lambda m: m.group(1) or _NBSP, text)
+
+
 # Parses the raw lines on initialization; the `elems` property is then
 # the resulting list of elements.
 class _Parser:
@@ -207,13 +217,13 @@ class _Parser:
         m = self._match_cur_line(rf'^{prefix} (\S.*)')
 
         if m and len(self._next_line) == 0:
-            elem = elem_type(m.group(1))
+            elem = elem_type(_convert_nbsp(m.group(1)))
             self._goto_next_line()
             return elem
 
         # with underline?
         if self._match_next_line(fr'^{underscore_ch}+\s*$'):
-            elem = elem_type(self._cur_line)
+            elem = elem_type(_convert_nbsp(self._cur_line))
             self._goto_next_line(2)
             return elem
 
@@ -273,7 +283,7 @@ class _Parser:
             return
 
         self._goto_next_line()
-        return _DlItem([m.group(1)], _Parser([m.group(2)]).elems)
+        return _DlItem([_convert_nbsp(m.group(1))], _Parser([m.group(2)]).elems)
 
     _dt_pat = re.compile(r'^(\S.*):$')
     _indented_content_pat = re.compile(r'^    .')
@@ -316,7 +326,7 @@ class _Parser:
                 # no more terms
                 break
 
-            terms.append(dt_m.group(1))
+            terms.append(_convert_nbsp(dt_m.group(1)))
             self._goto_next_line()
 
         if len(terms) == 0:
@@ -628,15 +638,25 @@ class _Parser:
     def _try_parse_ol(self):
         return self._try_parse_simple_list(_Ol, self._try_parse_ol_item)
 
-    _literal_pat = re.compile(r'[\([{]?`[^`]*`\S*')
+    # A literal, possibly followed with non-space characters or other
+    # literals (for example, `a`␣`b c`).
+    #
+    # A non-breaking space (`␣` above) isn't a word separator, although
+    # Python considers it as whitespace.
+    _literal_pat = re.compile(r'[\([{]?`[^`]*`(?:[^\s`]|\u00a0|`[^`]*`)*')
     _word_pat = re.compile(r'(.+?)(?=[\([{]?`| |$)')
+    _word_strip_pat = re.compile(r'^[^\S\u00a0]+|[^\S\u00a0]+$')
 
     # Converts a paragraph text to a paragraph element containing
     # individual words.
     @staticmethod
     def _p_elem_from_text(text: str):
+        text = _convert_nbsp(text)
         elems: List[str] = []
         i = 0
+
+        # text index where a literal glues to the previous word, if any
+        glue_at = -1
 
         # scan the text
         while i < len(text):
@@ -645,17 +665,25 @@ class _Parser:
 
             if m:
                 # literal
-                elems.append(m.group(0))
+                if i == glue_at:
+                    # glue to previous word ending with a non-breaking
+                    # space
+                    elems[-1] += m.group(0)
+                else:
+                    elems.append(m.group(0))
             else:
                 # word?
                 m = _Parser._word_pat.match(text, i)
 
                 if m:
                     # word
-                    word = m.group(1).strip()
+                    word = _Parser._word_strip_pat.sub('', m.group(1))
 
                     if len(word) >= 1:
                         elems.append(word)
+
+                        if m.group(1).endswith(_NBSP):
+                            glue_at = m.end()
 
             if m:
                 i += len(m.group(0))
