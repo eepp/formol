@@ -439,7 +439,7 @@ becomes
 Formol requires Python␣3, but `a~~b` stays as is.
 ----
 
-where `␣` `Python` and `3` is pass:[U+00A0].
+where `␣` between `Python` and `3` is pass:[U+00A0].
 
 This works within paragraphs (including list items, blockquotes,
 admonition boxes, and definitions), headings, and definition list terms,
