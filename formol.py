@@ -149,6 +149,19 @@ def _convert_nbsp(text: str):
     return _nbsp_pat.sub(lambda m: m.group(1) or _NBSP, text)
 
 
+_literal_split_pat = re.compile(r'(`[^`]*`)')
+
+
+# Returns `text` with everything outside a literal (between backticks)
+# converted to uppercase.
+def _upper_outside_literals(text: str):
+    parts = _literal_split_pat.split(text)
+
+    # even indexes are outside literals, odd indexes are literals
+    return ''.join(part if i % 2 else part.upper()
+                   for i, part in enumerate(parts))
+
+
 # Parses the raw lines on initialization; the `elems` property is then
 # the resulting list of elements.
 class _Parser:
@@ -1147,7 +1160,7 @@ class _Formatter:
 
     # Returns the lines of the first level heading `h1`.
     def _h1_lines(self, h1: _H1):
-        return self._heading_lines(h1.text.upper(), '━')
+        return self._heading_lines(_upper_outside_literals(h1.text), '━')
 
     # Returns the lines of the level 2 heading `h2`.
     def _h2_lines(self, h2: _H2):

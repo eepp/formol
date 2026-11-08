@@ -360,6 +360,19 @@ SALUT LA GANG
 ━━━━━━━━━━━━━
 ----
 
+Formol keeps the case of any literal (between backticks) as is:
+
+----
+= the `snake_case` name
+----
+
+becomes
+
+----
+THE `snake_case` NAME
+━━━━━━━━━━━━━━━━━━━━━
+----
+
 [TIP]
 ====
 You may modify a formatted first level heading and reformat: Formol
