@@ -5,126 +5,175 @@ import pytest
 import formol
 
 
+# Returns the lines of the triple-quoted string `text` between its first
+# line (empty) and its last line (the indentation of the closing
+# delimiter), removing said indentation from each of them.
+#
+# Unlike textwrap.dedent(), this keeps any indentation common to all the
+# content lines, for example a leading tab which is part of the
+# tested comment.
+def _dedent(text):
+    lines = text.split('\n')
+    assert lines[0] == ''
+    indent = lines[-1]
+    assert indent.strip(' ') == ''
+    content_lines = lines[1:-1]
+    assert all(line.startswith(indent) for line in content_lines)
+    return '\n'.join(line[len(indent):] for line in content_lines)
+
+
 @pytest.mark.parametrize('comment,start_col,max_line_len,expected', [
     # reflow within `max_line_len`, no indentation
     pytest.param(
-        '/*\n'
-        ' * Lorem ipsum dolor sit amet, consectetur adipiscing elit,\n'
-        ' * sed do eiusmod tempor.\n'
-        ' */',
+        _dedent('''
+            /*
+             * Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+             * sed do eiusmod tempor.
+             */
+            '''),
         0, 40,
-        '/*\n'
-        ' * Lorem ipsum dolor sit amet,\n'
-        ' * consectetur adipiscing elit, sed do\n'
-        ' * eiusmod tempor.\n'
-        ' */',
+        _dedent('''
+            /*
+             * Lorem ipsum dolor sit amet,
+             * consectetur adipiscing elit, sed do
+             * eiusmod tempor.
+             */
+            '''),
         id='reflow-no-indent',
     ),
 
     # `start_col` shrinks the wrap budget and pads each output line
     # with spaces.
     pytest.param(
-        '    /*\n'
-        '     * Lorem ipsum dolor sit amet, consectetur adipiscing.\n'
-        '     */',
+        _dedent('''
+                /*
+                 * Lorem ipsum dolor sit amet, consectetur adipiscing.
+                 */
+            '''),
         4, 30,
-        '/*\n'
-        '     * Lorem ipsum dolor sit\n'
-        '     * amet,\n'
-        '     * consectetur adipiscing.\n'
-        '     */',
+        _dedent('''
+            /*
+                 * Lorem ipsum dolor sit
+                 * amet,
+                 * consectetur adipiscing.
+                 */
+            '''),
         id='space-indent-start-col',
     ),
 
-    # One leading tab in the input → one leading tab on every output
-    # line.
+    # One leading tab in the input → one leading tab on every
+    # output line.
     #
     # The visual tab width is inferred from `start_col`.
     pytest.param(
-        '\t/*\n'
-        '\t * Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n'
-        '\t */',
+        _dedent('''
+            \t/*
+            \t * Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            \t */
+            '''),
         8, 40,
-        '/*\n'
-        '\t * Lorem ipsum dolor sit amet,\n'
-        '\t * consectetur adipiscing elit.\n'
-        '\t */',
+        _dedent('''
+            /*
+            \t * Lorem ipsum dolor sit amet,
+            \t * consectetur adipiscing elit.
+            \t */
+            '''),
         id='tab-indent-one-tab',
     ),
 
     # Two leading tabs → tab width inferred as half of `start_col`; two
     # tabs appear on every output line.
     pytest.param(
-        '\t\t/*\n'
-        '\t\t * Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n'
-        '\t\t */',
+        _dedent('''
+            \t\t/*
+            \t\t * Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            \t\t */
+            '''),
         8, 40,
-        '/*\n'
-        '\t\t * Lorem ipsum dolor sit amet,\n'
-        '\t\t * consectetur adipiscing elit.\n'
-        '\t\t */',
+        _dedent('''
+            /*
+            \t\t * Lorem ipsum dolor sit amet,
+            \t\t * consectetur adipiscing elit.
+            \t\t */
+            '''),
         id='tab-indent-two-tabs',
     ),
 
     # Leading tab followed with spaces → same indentation on every
     # output line.
     #
-    # The visual tab width is inferred from `start_col` minus the
-    # number of spaces.
+    # The visual tab width is inferred from `start_col` minus the number
+    # of spaces.
     pytest.param(
-        '\t  /*\n'
-        '\t   * Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n'
-        '\t   */',
+        _dedent('''
+            \t  /*
+            \t   * Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            \t   */
+            '''),
         10, 42,
-        '/*\n'
-        '\t   * Lorem ipsum dolor sit amet,\n'
-        '\t   * consectetur adipiscing elit.\n'
-        '\t   */',
+        _dedent('''
+            /*
+            \t   * Lorem ipsum dolor sit amet,
+            \t   * consectetur adipiscing elit.
+            \t   */
+            '''),
         id='tab-and-space-indent',
     ),
 
     # Empty content lines (` *` after strip) are preserved as
     # paragraph breaks.
     pytest.param(
-        '/*\n'
-        ' * First paragraph here.\n'
-        ' *\n'
-        ' * Second paragraph here.\n'
-        ' */',
+        _dedent('''
+            /*
+             * First paragraph here.
+             *
+             * Second paragraph here.
+             */
+            '''),
         0, 72,
-        '/*\n'
-        ' * First paragraph here.\n'
-        ' *\n'
-        ' * Second paragraph here.\n'
-        ' */',
+        _dedent('''
+            /*
+             * First paragraph here.
+             *
+             * Second paragraph here.
+             */
+            '''),
         id='blank-line-between-paragraphs',
     ),
 
     # Comment form is preserved: opening `/*`, leading ` * `,
     # closing ` */`.
     #
-    # A single content line still gets wrapped in the proper
-    # block comment shell.
+    # A single content line still gets wrapped in the proper block
+    # comment shell.
     pytest.param(
-        '/*\n'
-        ' * Hi.\n'
-        ' */',
+        _dedent('''
+            /*
+             * Hi.
+             */
+            '''),
         0, 72,
-        '/*\n'
-        ' * Hi.\n'
-        ' */',
+        _dedent('''
+            /*
+             * Hi.
+             */
+            '''),
         id='minimal-roundtrip',
     ),
 
     # comment without any content
     pytest.param(
-        '/*\n'
-        ' *\n'
-        ' *\n'
-        ' */',
+        _dedent('''
+            /*
+             *
+             *
+             */
+            '''),
         4, 72,
-        '/*\n'
-        '     */',
+        _dedent('''
+            /*
+                 */
+            '''),
         id='empty',
     ),
 ])
@@ -136,12 +185,16 @@ def test_format_c_block_comment(comment, start_col, max_line_len, expected):
 @pytest.mark.parametrize('comment,start_col,max_line_len,prefix,expected', [
     # reflow with the default Python `# ` prefix
     pytest.param(
-        '# Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\n'
-        '# eiusmod tempor.',
+        _dedent('''
+            # Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            # eiusmod tempor.
+            '''),
         0, 40, '# ',
-        '# Lorem ipsum dolor sit amet,\n'
-        '# consectetur adipiscing elit, sed do\n'
-        '# eiusmod tempor.',
+        _dedent('''
+            # Lorem ipsum dolor sit amet,
+            # consectetur adipiscing elit, sed do
+            # eiusmod tempor.
+            '''),
         id='reflow-hash-prefix',
     ),
 
@@ -149,24 +202,30 @@ def test_format_c_block_comment(comment, start_col, max_line_len, expected):
     #
     # Output uses the same prefix.
     pytest.param(
-        '// Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n'
-        '// Sed do eiusmod tempor incididunt.',
+        _dedent('''
+            // Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            // Sed do eiusmod tempor incididunt.
+            '''),
         0, 30, '// ',
-        '// Lorem ipsum dolor sit amet,\n'
-        '// consectetur adipiscing\n'
-        '// elit. Sed do eiusmod\n'
-        '// tempor incididunt.',
+        _dedent('''
+            // Lorem ipsum dolor sit amet,
+            // consectetur adipiscing
+            // elit. Sed do eiusmod
+            // tempor incididunt.
+            '''),
         id='custom-slash-prefix',
     ),
 
-    # Space-indented input: leading spaces appear on every output
-    # line, sized by `start_col`.
+    # Space-indented input: leading spaces appear on every output line,
+    # sized by `start_col`.
     pytest.param(
         '    # Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         4, 30, '# ',
-        '    # Lorem ipsum dolor sit\n'
-        '    # amet, consectetur\n'
-        '    # adipiscing elit.',
+        _dedent('''
+                # Lorem ipsum dolor sit
+                # amet, consectetur
+                # adipiscing elit.
+            '''),
         id='space-indent-start-col',
     ),
 
@@ -174,8 +233,10 @@ def test_format_c_block_comment(comment, start_col, max_line_len, expected):
     pytest.param(
         '\t# Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         8, 40, '# ',
-        '\t# Lorem ipsum dolor sit amet,\n'
-        '\t# consectetur adipiscing elit.',
+        _dedent('''
+            \t# Lorem ipsum dolor sit amet,
+            \t# consectetur adipiscing elit.
+            '''),
         id='tab-indent-one-tab',
     ),
 
@@ -184,8 +245,10 @@ def test_format_c_block_comment(comment, start_col, max_line_len, expected):
     pytest.param(
         '\t\t# Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         8, 40, '# ',
-        '\t\t# Lorem ipsum dolor sit amet,\n'
-        '\t\t# consectetur adipiscing elit.',
+        _dedent('''
+            \t\t# Lorem ipsum dolor sit amet,
+            \t\t# consectetur adipiscing elit.
+            '''),
         id='tab-indent-two-tabs',
     ),
 
@@ -195,20 +258,26 @@ def test_format_c_block_comment(comment, start_col, max_line_len, expected):
     pytest.param(
         '\t  # Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         10, 42, '# ',
-        '\t  # Lorem ipsum dolor sit amet,\n'
-        '\t  # consectetur adipiscing elit.',
+        _dedent('''
+            \t  # Lorem ipsum dolor sit amet,
+            \t  # consectetur adipiscing elit.
+            '''),
         id='tab-and-space-indent',
     ),
 
     # prefix-only lines mark paragraph breaks and are preserved
     pytest.param(
-        '# First paragraph here.\n'
-        '#\n'
-        '# Second paragraph here.',
+        _dedent('''
+            # First paragraph here.
+            #
+            # Second paragraph here.
+            '''),
         0, 72, '# ',
-        '# First paragraph here.\n'
-        '#\n'
-        '# Second paragraph here.',
+        _dedent('''
+            # First paragraph here.
+            #
+            # Second paragraph here.
+            '''),
         id='blank-line-between-paragraphs',
     ),
 
@@ -223,8 +292,10 @@ def test_format_c_block_comment(comment, start_col, max_line_len, expected):
 
     # comment without any content → single empty comment line
     pytest.param(
-        '    #\n'
-        '    #',
+        _dedent('''
+                #
+                #
+            '''),
         4, 72, '# ',
         '    #',
         id='empty',
