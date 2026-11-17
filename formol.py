@@ -1163,6 +1163,11 @@ class _Formatter:
     @staticmethod
     def _heading_lines(text: str, underline_ch: str):
         assert len(underline_ch) == 1
+
+        # remove trailing whitespace now so that the underline length
+        # matches the length of the final heading line
+        text = text.rstrip()
+
         return [text, underline_ch * len(text)]
 
     # Returns the lines of the first level heading `h1`.
