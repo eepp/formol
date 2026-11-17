@@ -172,6 +172,29 @@ def _convert_nbsp(text: str):
     return _nbsp_pat.sub(lambda m: m.group(1) or _NBSP, text)
 
 
+# Like with Asciidoctor, the opening quote must not follow a word
+# character, `;`, `:`, or `}`, and the closing quote must not precede a
+# word character.
+_curved_quotes_pat = re.compile(r'(`[^`]*`)|(?<![\w;:}])"`(\S|\S.*?\S)`"(?!\w)')
+
+
+# Returns `text` with each
+#
+#     "`text`"
+#
+# outside a literal (between backticks) replaced with
+#
+#     “text”
+def _convert_curved_quotes(text: str):
+    return _curved_quotes_pat.sub(lambda m: m.group(1) or f'“{m.group(2)}”', text)
+
+
+# Returns `text` with its inline markup (double curved quotes and
+# non-breaking spaces) converted.
+def _convert_inline(text: str):
+    return _convert_nbsp(_convert_curved_quotes(text))
+
+
 _literal_split_pat = re.compile(r'(`[^`]*`)')
 
 
@@ -264,13 +287,13 @@ class _Parser:
         m = self._match_cur_line(rf'^{prefix} (\S.*)')
 
         if m and self._line_is_empty(self._next_line):
-            elem = elem_type(_convert_nbsp(m.group(1)))
+            elem = elem_type(_convert_inline(m.group(1)))
             self._goto_next_line()
             return elem
 
         # with underline?
         if self._match_next_line(fr'^{underscore_ch}+\s*$'):
-            elem = elem_type(_convert_nbsp(self._cur_line))
+            elem = elem_type(_convert_inline(self._cur_line))
             self._goto_next_line(2)
             return elem
 
@@ -330,7 +353,7 @@ class _Parser:
             return
 
         self._goto_next_line()
-        return _DlItem([_convert_nbsp(m.group(1))], _Parser([m.group(2)]).elems)
+        return _DlItem([_convert_inline(m.group(1))], _Parser([m.group(2)]).elems)
 
     _dt_pat = re.compile(r'^(\S.*):$')
     _indented_content_pat = re.compile(r'^    .')
@@ -373,7 +396,7 @@ class _Parser:
                 # no more terms
                 break
 
-            terms.append(_convert_nbsp(dt_m.group(1)))
+            terms.append(_convert_inline(dt_m.group(1)))
             self._goto_next_line()
 
         if len(terms) == 0:
@@ -708,7 +731,7 @@ class _Parser:
     def _p_elem_from_text(text: str):
         words: List[str] = []
 
-        for m in _Parser._word_pat.finditer(_convert_nbsp(text)):
+        for m in _Parser._word_pat.finditer(_convert_inline(text)):
             # strip any other whitespace (for example, a tab) at both ends
             word = _Parser._word_strip_pat.sub('', m.group(0))
 
