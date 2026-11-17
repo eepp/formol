@@ -654,57 +654,36 @@ class _Parser:
     def _try_parse_ol(self):
         return self._try_parse_simple_list(_Ol, self._try_parse_ol_item)
 
-    # A literal, possibly followed with non-space characters or other
-    # literals (for example, `a`␣`b c`).
+    # A word, that is, one or more of:
     #
-    # A non-breaking space (`␣` above) isn't a word separator, although
-    # Python considers it as whitespace.
-    _literal_pat = re.compile(r'[\([{]?`[^`]*`(?:[^\s`]|\u00a0|`[^`]*`)*')
-    _word_pat = re.compile(r'(.+?)(?=[\([{]?`| |$)')
+    # • A literal (between backticks), possibly containing spaces.
+    # • A single backtick (without a matching closing backtick).
+    # • Any other character except a space.
+    #
+    # Only a space separates two words, therefore:
+    #
+    # • A literal glues to the characters around it: for example, the
+    #   whole "`foo`" or func(`x`) is a single word.
+    #
+    # • A non-breaking space isn't a word separator, although Python
+    #   considers it as whitespace.
+    _word_pat = re.compile(r'(?:`[^`]*`|[^ `]|`)+')
     _word_strip_pat = re.compile(r'^[^\S\u00a0]+|[^\S\u00a0]+$')
 
     # Converts a paragraph text to a paragraph element containing
     # individual words.
     @staticmethod
     def _p_elem_from_text(text: str):
-        text = _convert_nbsp(text)
-        elems: List[str] = []
-        i = 0
+        words: List[str] = []
 
-        # text index where a literal glues to the previous word, if any
-        glue_at = -1
+        for m in _Parser._word_pat.finditer(_convert_nbsp(text)):
+            # strip any other whitespace (for example, a tab) at both ends
+            word = _Parser._word_strip_pat.sub('', m.group(0))
 
-        # scan the text
-        while i < len(text):
-            # literal?
-            m = _Parser._literal_pat.match(text, i)
+            if len(word) >= 1:
+                words.append(word)
 
-            if m:
-                # literal
-                if i == glue_at:
-                    # glue to previous word ending with a non-breaking
-                    # space
-                    elems[-1] += m.group(0)
-                else:
-                    elems.append(m.group(0))
-            else:
-                # word?
-                m = _Parser._word_pat.match(text, i)
-
-                if m:
-                    # word
-                    word = _Parser._word_strip_pat.sub('', m.group(1))
-
-                    if len(word) >= 1:
-                        elems.append(word)
-
-                        if m.group(1).endswith(_NBSP):
-                            glue_at = m.end()
-
-            if m:
-                i += len(m.group(0))
-
-        return _P(elems)
+        return _P(words)
 
     _trailer_line_pat = re.compile(r'^[A-Za-z0-9_][A-Za-z0-9_-]*: \S')
 
