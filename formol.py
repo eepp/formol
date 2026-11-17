@@ -160,9 +160,14 @@ def _upper_outside_literals(text: str):
 
 # Parses the raw lines on initialization; the `elems` property is then
 # the resulting list of elements.
+#
+# `is_top_level` is `True` if `lines` are the lines of the whole text,
+# as opposed to the content lines of some element (list item,
+# blockquote, and the like).
 class _Parser:
-    def __init__(self, lines: Sequence[str]):
+    def __init__(self, lines: Sequence[str], is_top_level: bool = False):
         self._lines = lines
+        self._is_top_level = is_top_level
         self._at: int = 0
         self._last_line_index = len(lines) - 1
         self._elems : List[_Elem] = []
@@ -696,8 +701,9 @@ class _Parser:
     #     pickled. Tofu disrupt poke four loko cronut sus shaman hell of
     #     food truck praxis wolf paleo fam.
     #
-    # If all the lines of the paragraph look like Git trailer lines,
-    # then returns a `_Trailers` instance to preserve them instead.
+    # If the paragraph ends the whole text and all its lines look like
+    # Git trailer lines, then returns a `_Trailers` instance to preserve
+    # them instead.
     def _try_parse_p_or_trailers(self):
         lines: List[str] = []
 
@@ -711,8 +717,11 @@ class _Parser:
             self._goto_next_line()
 
         if len(lines) >= 1:
-            # if all lines look like Git trailers, keep them as is
-            if all(self._trailer_line_pat.match(line) for line in lines):
+            # if the paragraph ends the whole text and all its lines
+            # look like Git trailers, keep them as is
+            if (self._is_top_level and
+                    all(self._line_is_empty(line) for line in self._lines[self._at:]) and
+                    all(self._trailer_line_pat.match(line) for line in lines)):
                 return _Trailers(lines)
 
             # join lines with a single space
@@ -1205,7 +1214,7 @@ class _Formatter:
 # Use format_c_block_comment() or format_prefixed_block_comment() to
 # format a complete C/C++ or prefixed block comment.
 def format(text: str, max_line_len: int = 72):
-    return '\n'.join(_Formatter(_Parser(text.splitlines()).elems,
+    return '\n'.join(_Formatter(_Parser(text.splitlines(), True).elems,
                                 max_line_len).lines)
 
 
@@ -1278,7 +1287,7 @@ def format_c_block_comment(comment: str, start_col: int = 0,
         content_lines.append(m.group(1))
 
     # format contents of comment
-    new_content_lines = _Formatter(_Parser(content_lines).elems,
+    new_content_lines = _Formatter(_Parser(content_lines, True).elems,
                                    max_line_len - start_col - 3).lines
 
     # create and return final comment
@@ -1355,7 +1364,7 @@ def format_prefixed_block_comment(comment: str, start_col: int = 0,
         content_lines.append(m.group(1))
 
     # format contents of comment
-    new_content_lines = _Formatter(_Parser(content_lines).elems,
+    new_content_lines = _Formatter(_Parser(content_lines, True).elems,
                                    max_line_len - start_col - len(prefix)).lines
 
     if len(new_content_lines) == 0:
