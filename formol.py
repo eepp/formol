@@ -115,15 +115,11 @@ class _Trailers(_Elem):
 
 # Returns `lines` without trailing empty lines.
 #
-# `lines` must not be empty.
+# The returned list is empty if `lines` only contains empty lines.
 def _remove_trailing_empty_lines(lines: List[str]):
-    assert len(lines) >= 1
     new_lines = lines.copy()
 
-    while True:
-        if new_lines[-1] != '':
-            break
-
+    while len(new_lines) >= 1 and new_lines[-1] == '':
         del new_lines[-1]
 
     return new_lines
@@ -898,10 +894,16 @@ class _Parser:
 
             # try each parsing function
             for func in funcs:
+                at = self._at
                 elem = func()
 
                 if elem is not None:
                     self._elems.append(elem)
+                    break
+
+                if self._at != at:
+                    # `func` consumed an element without content
+                    # (for example, an empty delimited block): drop it
                     break
 
 
@@ -976,8 +978,8 @@ class _Formatter:
 
     # Returns the lines of the unordered list item `item`.
     def _ul_item_lines(self, item: _SimpleListItem):
-        # get indented element lines
-        lines = self._format_elems_indented(item.elems, 2)
+        # get indented element lines (single empty line if none)
+        lines = self._format_elems_indented(item.elems, 2) or ['']
 
         # insert bullet point
         bullet = ['•', '‣', '⁃'][self._cur_ul_level % 3]
@@ -1041,9 +1043,9 @@ class _Formatter:
     def _ol_item_lines(self, ol: _Ol, index: int, item: _SimpleListItem):
         num = self._make_ol_item_num(ol, index)
 
-        # get indented element lines
+        # get indented element lines (single empty line if none)
         indent_len = len(num) + 1
-        lines = self._format_elems_indented(item.elems, indent_len)
+        lines = self._format_elems_indented(item.elems, indent_len) or ['']
 
         # insert number
         lines[0] = f'{num} {lines[0][indent_len:]}'
@@ -1120,6 +1122,10 @@ class _Formatter:
         # remove trailing empty lines
         lines = _remove_trailing_empty_lines(lines)
 
+        if len(lines) == 0:
+            # nothing to quote
+            return lines
+
         # insert `>` prefix
         for index in range(len(lines)):
             lines[index] = f'> {lines[index][2:]}'
@@ -1132,6 +1138,10 @@ class _Formatter:
     def _admon_box_lines(self, admon_box: _AdmonBox):
         # get element lines
         content_lines = self._format_elems(admon_box.elems, self._max_line_len - 4)
+
+        if len(content_lines) == 0:
+            # nothing to put in a box
+            return content_lines
 
         # find longest line
         longest_content_line_len = len(max(content_lines,
@@ -1361,6 +1371,10 @@ def format_prefixed_block_comment(comment: str, start_col: int = 0,
     # format contents of comment
     new_content_lines = _Formatter(_Parser(content_lines).elems,
                                    max_line_len - start_col - len(prefix)).lines
+
+    if len(new_content_lines) == 0:
+        # keep a single empty comment line rather than no comment at all
+        new_content_lines = ['']
 
     # create and return final comment
     new_comment_lines: List[str] = []

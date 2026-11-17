@@ -98,6 +98,18 @@ import formol
         ' */',
         id='minimal-roundtrip',
     ),
+
+    # comment without any content
+    pytest.param(
+        '/*\n'
+        ' *\n'
+        ' *\n'
+        ' */',
+        4, 72,
+        '/*\n'
+        '     */',
+        id='empty',
+    ),
 ])
 def test_format_c_block_comment(comment, start_col, max_line_len, expected):
     assert formol.format_c_block_comment(comment, start_col=start_col,
@@ -179,6 +191,15 @@ def test_format_c_block_comment(comment, start_col, max_line_len, expected):
         0, 72, '# ',
         '# Hi.',
         id='minimal-roundtrip',
+    ),
+
+    # comment without any content → single empty comment line
+    pytest.param(
+        '    #\n'
+        '    #',
+        4, 72, '# ',
+        '    #',
+        id='empty',
     ),
 ])
 def test_format_prefixed_block_comment(comment, start_col, max_line_len,
