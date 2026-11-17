@@ -135,6 +135,33 @@ def _indent_str(count: int, tab_width: Optional[int] = None):
     return '\t' * (count // tab_width) + ' ' * (count % tab_width)
 
 
+# Infers the visual tab width from the indentation of the first line of
+# `comment_lines`, the indentation being `start_col` visual columns wide.
+#
+# The indentation must be one or more tab characters, possibly followed
+# with spaces.
+#
+# Returns `None` if the first line doesn't begin with a tab character or
+# if the inference fails.
+def _infer_tab_width(comment_lines: List[str],
+                     start_col: int) -> Optional[int]:
+    if len(comment_lines) == 0:
+        return
+
+    first_line = comment_lines[0]
+    after_tabs = first_line.lstrip('\t')
+    tab_count = len(first_line) - len(after_tabs)
+
+    if tab_count == 0:
+        return
+
+    space_count = len(after_tabs) - len(after_tabs.lstrip(' '))
+    tab_width = (start_col - space_count) // tab_count
+
+    if tab_width > 0:
+        return tab_width
+
+
 _NBSP = '\u00a0'
 _nbsp_pat = re.compile(r'(`[^`]*`)|~~')
 
@@ -1236,9 +1263,9 @@ def format(text: str, max_line_len: int = 72):
 #
 # If the first line of `comment` begins with one or more tab characters,
 # then this function indents the returned comment with tabs too,
-# inferring the visual tab width from `start_col` and the number of
-# leading tabs on that first line. Otherwise this function indents with
-# spaces only.
+# inferring the visual tab width from `start_col` and the numbers of
+# leading tabs and following spaces on that first line. Otherwise this
+# function indents with spaces only.
 #
 # The whole `comment` string must have a format such as this:
 #
@@ -1262,15 +1289,8 @@ def format_c_block_comment(comment: str, start_col: int = 0,
     # extract content lines from comment string
     comment_lines = comment.splitlines()
 
-    # infer tab width from the leading tabs (if any) of the first line
-    tab_width: Optional[int] = None
-
-    if comment_lines and comment_lines[0].startswith('\t'):
-        n_tabs = len(comment_lines[0]) - len(comment_lines[0].lstrip('\t'))
-        deduced = start_col // n_tabs
-
-        if deduced > 0:
-            tab_width = deduced
+    # infer tab width from the indentation of the first line
+    tab_width = _infer_tab_width(comment_lines, start_col)
 
     content_lines: List[str] = []
     line_pat = re.compile(r'\s*\* (.+)')
@@ -1319,8 +1339,9 @@ def format_c_block_comment(comment: str, start_col: int = 0,
 #
 # If the first line of `comment` begins with one or more tab characters,
 # this function indents the returned comment with tabs too, inferring
-# the visual tab width from `start_col` and the number of leading tabs
-# on that first line. Otherwise this function indents with spaces only.
+# the visual tab width from `start_col` and the numbers of leading tabs
+# and following spaces on that first line. Otherwise this function
+# indents with spaces only.
 #
 # The whole `comment` string must have a format such as this (example
 # with the Python prefix):
@@ -1345,15 +1366,8 @@ def format_prefixed_block_comment(comment: str, start_col: int = 0,
     s_prefix = prefix.rstrip()
     line_pat = re.compile(fr'\s*{re.escape(prefix)}(.+)')
 
-    # infer tab width from the leading tabs (if any) of the first line
-    tab_width: Optional[int] = None
-
-    if comment_lines and comment_lines[0].startswith('\t'):
-        n_tabs = len(comment_lines[0]) - len(comment_lines[0].lstrip('\t'))
-        deduced = start_col // n_tabs
-
-        if deduced > 0:
-            tab_width = deduced
+    # infer tab width from the indentation of the first line
+    tab_width = _infer_tab_width(comment_lines, start_col)
 
     for comment_line in comment_lines:
         comment_line = comment_line.strip()

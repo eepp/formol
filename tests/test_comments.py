@@ -66,6 +66,23 @@ import formol
         id='tab-indent-two-tabs',
     ),
 
+    # Leading tab followed with spaces → same indentation on every
+    # output line.
+    #
+    # The visual tab width is inferred from `start_col` minus the
+    # number of spaces.
+    pytest.param(
+        '\t  /*\n'
+        '\t   * Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n'
+        '\t   */',
+        10, 42,
+        '/*\n'
+        '\t   * Lorem ipsum dolor sit amet,\n'
+        '\t   * consectetur adipiscing elit.\n'
+        '\t   */',
+        id='tab-and-space-indent',
+    ),
+
     # Empty content lines (` *` after strip) are preserved as
     # paragraph breaks.
     pytest.param(
@@ -170,6 +187,17 @@ def test_format_c_block_comment(comment, start_col, max_line_len, expected):
         '\t\t# Lorem ipsum dolor sit amet,\n'
         '\t\t# consectetur adipiscing elit.',
         id='tab-indent-two-tabs',
+    ),
+
+    # Leading tab followed with spaces → same indentation on every
+    # output line (tab width inferred as `start_col` minus the
+    # number of spaces).
+    pytest.param(
+        '\t  # Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        10, 42, '# ',
+        '\t  # Lorem ipsum dolor sit amet,\n'
+        '\t  # consectetur adipiscing elit.',
+        id='tab-and-space-indent',
     ),
 
     # prefix-only lines mark paragraph breaks and are preserved
