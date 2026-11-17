@@ -482,6 +482,30 @@ the closing `"` must not precede a word character.
 This works where the <<non-breaking-space,non-breaking space>>
 conversion works.
 
+=== Em dash and arrows
+
+Like
+https://docs.asciidoctor.org/asciidoc/latest/subs/replacements/[Asciidoctor],
+outside a literal string (between backticks), Formol converts:
+
+* `--` to `—` (pass:[U+2014]) between two word characters, or after a
+  space and before a space or the end of the text.
+* `+->+` to `→` (pass:[U+2192]).
+* `+=>+` to `⇒` (pass:[U+21D2]).
+
+----
+It works -- mostly: a--b -> c => d, but `a -> b` stays as is.
+----
+
+becomes
+
+----
+It works — mostly: a—b → c ⇒ d, but `a -> b` stays as is.
+----
+
+This works where the <<non-breaking-space,non-breaking space>>
+conversion works.
+
 === Break
 
 ----

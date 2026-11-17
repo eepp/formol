@@ -1,0 +1,3 @@
+Call f() -> int, a => b, but not `a -> b` or `c => d`.
+---
+Call f() → int, a ⇒ b, but not `a -> b` or `c => d`.

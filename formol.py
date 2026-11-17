@@ -163,13 +163,26 @@ def _infer_tab_width(comment_lines: List[str],
 
 
 _NBSP = '\u00a0'
-_nbsp_pat = re.compile(r'(`[^`]*`)|~~')
+
+# Replacement of each `_replace_pat` match which isn't a literal.
+#
+# Like with Asciidoctor, `--` becomes an em dash between two word
+# characters, or after a space and before a space or the end of
+# the text.
+_replacements = {
+    '~~': _NBSP,
+    '--': '\u2014',
+    '->': '\u2192',
+    '=>': '\u21d2',
+}
+
+_replace_pat = re.compile(r'`[^`]*`|~~|(?<= )--(?= |$)|(?<=\w)--(?=\w)|->|=>')
 
 
-# Returns `text` with each `~~` outside a literal (between backticks)
-# replaced with a non-breaking space.
-def _convert_nbsp(text: str):
-    return _nbsp_pat.sub(lambda m: m.group(1) or _NBSP, text)
+# Returns `text` with each key of `_replacements` outside a literal
+# (between backticks) replaced with its value.
+def _replace(text: str):
+    return _replace_pat.sub(lambda m: _replacements.get(m.group(0), m.group(0)), text)
 
 
 # Like with Asciidoctor, the opening quote must not follow a word
@@ -189,10 +202,10 @@ def _convert_curved_quotes(text: str):
     return _curved_quotes_pat.sub(lambda m: m.group(1) or f'“{m.group(2)}”', text)
 
 
-# Returns `text` with its inline markup (double curved quotes and
-# non-breaking spaces) converted.
+# Returns `text` with its inline markup (double curved quotes, dashes,
+# arrows, and non-breaking spaces) converted.
 def _convert_inline(text: str):
-    return _convert_nbsp(_convert_curved_quotes(text))
+    return _replace(_convert_curved_quotes(text))
 
 
 _literal_split_pat = re.compile(r'(`[^`]*`)')

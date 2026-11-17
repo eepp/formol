@@ -1,0 +1,4 @@
+A -> B:: Lorem -- ipsum => dolor.
+---
+A → B:
+    Lorem — ipsum ⇒ dolor.
