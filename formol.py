@@ -1041,7 +1041,7 @@ class _Formatter:
     # list level.
     def _make_ol_item_num(self, ol: _Ol, index: int):
         if self._cur_ol_level % 2 == 0:
-            max_num_width = len(f'{len(ol.items) - 1}')
+            max_num_width = len(f'{len(ol.items)}')
             return f'{{:>{max_num_width}}}.'.format(index + 1)
 
         return f'{chr(ord("a") + (index % 26))})'
