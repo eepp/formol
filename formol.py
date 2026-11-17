@@ -179,10 +179,16 @@ class _Parser:
         assert not self._is_done
         return self._lines[self._at]
 
-    # `True` if the current line to parse is empty.
+    # `True` if `line` is empty or only contains whitespace.
+    @staticmethod
+    def _line_is_empty(line: str):
+        return len(line.strip()) == 0
+
+    # `True` if the current line to parse is empty or only
+    # contains whitespace.
     @property
     def _cur_line_is_empty(self):
-        return len(self._cur_line) == 0
+        return self._line_is_empty(self._cur_line)
 
     # Next line to parse or an empty line if not available.
     @property
@@ -225,7 +231,7 @@ class _Parser:
         # with prefix?
         m = self._match_cur_line(rf'^{prefix} (\S.*)')
 
-        if m and len(self._next_line) == 0:
+        if m and self._line_is_empty(self._next_line):
             elem = elem_type(_convert_nbsp(m.group(1)))
             self._goto_next_line()
             return elem
@@ -467,8 +473,9 @@ class _Parser:
                 self._goto_next_line()
                 break
 
-            # append content line and go to next line
-            lines.append(self._cur_line)
+            # append content line (empty if it only contains
+            # whitespace) and go to next line
+            lines.append('' if self._cur_line_is_empty else self._cur_line)
             self._goto_next_line()
 
         # remove trailing empty lines
