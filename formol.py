@@ -853,9 +853,11 @@ class _Parser:
 
             m = self._match_cur_line(r'[│ ] ([^│]*)')
 
-            if m:
-                lines.append(m.group(1).rstrip())
+            if not m:
+                # not a box line: we're done (missing bottom border)
+                break
 
+            lines.append(m.group(1).rstrip())
             self._goto_next_line()
 
         return _AdmonBox(_Parser(lines).elems)
