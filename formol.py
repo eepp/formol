@@ -283,7 +283,7 @@ class _Parser:
     # Example 2:
     #
     #     HELLO WORLD
-    #     ═══════════
+    #     ━━━━━━━━━━━
     def _try_parse_h1(self):
         return self._try_parse_heading(_H1, '=', '━')
 
