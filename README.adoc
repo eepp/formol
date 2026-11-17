@@ -262,9 +262,9 @@ If this whole string is named `str`, then the result of
  *
  * Poutine in Québec culture
  * ─────────────────────────
- * Poutine is more than just a dish; it's a cultural icon in Québec. It
- * embodies the joie de vivre of the Québécois people and is enjoyed in
- * many settings, from fast food restaurants to fine
+ * Poutine is more than just a dish; it's a cultural icon in Québec.
+ * It embodies the joie de vivre of the Québécois people and is
+ * enjoyed in many settings, from fast food restaurants to fine
  * dining establishments.
  *
  * Conclusion
@@ -436,6 +436,11 @@ distillery sus forage mlkshk irony helvetica, listicle hoodie.
 
 Note how there's no line break in the middle of a literal string
 (between backticks).
+
+Like TeX, Formol chooses the line breaks which make the line lengths as
+even as possible, avoiding a
+https://en.wikipedia.org/wiki/Widows_and_orphans[runt]
+(single word on the last line).
 
 === Non-breaking space
 

@@ -53,8 +53,8 @@ def _dedent(text):
         4, 30,
         _dedent('''
             /*
-                 * Lorem ipsum dolor sit
-                 * amet,
+                 * Lorem ipsum
+                 * dolor sit amet,
                  * consectetur adipiscing.
                  */
             '''),

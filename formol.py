@@ -997,37 +997,60 @@ class _Formatter:
 
         return lines
 
-    @staticmethod
-    def _p_line_list_len(lst: List[str]):
-        return sum([len(t) for t in lst])
-
     # Returns the lines of the paragraph `p`.
+    #
+    # Like Knuth-Plass for ragged-right text, this method breaks lines
+    # between words so as to minimize the sum of the squared free space
+    # at the end of each line except the last one.
+    #
+    # It only produces a runt (single word on the last line) when
+    # there's no other choice.
     def _p_lines(self, p: _P):
-        lines: List[List[str]] = [[]]
+        words = p.words
+        max_line_len = self._max_line_len
+        count = len(words)
+        runt_cost = max(max_line_len, 1) ** 2 * count + 1
 
-        # append each word, wrapping when necessary
-        for word in p.words:
-            to_append = f'{word} '
+        # `best_costs[i]` is the minimum cost to lay out `words[i:]` and
+        # `next_starts[i]` is the index of the first word of the next
+        # line in that case.
+        best_costs = [0] * (count + 1)
+        next_starts = [count] * (count + 1)
 
-            if len(lines[-1]) == 0:
-                # first word of the line, in case it doesn't fit
-                lines[-1].append(to_append)
-            elif self._p_line_list_len(lines[-1]) + len(word) > self._max_line_len:
-                # new line
-                lines.append([to_append])
-            else:
-                # append to current line
-                lines[-1].append(to_append)
+        for i in reversed(range(count)):
+            best_cost = None
+            line_len = -1
 
-        # avoid runt: if there are at least two lines and the last line
-        # contains a single word when two would fit, then just do it:
-        # this is more readable than a single word on the last line
-        if len(lines) >= 2 and len(lines[-1]) == 1 and len(lines[-2][-1]) + len(lines[-1][0]) - 1 <= self._max_line_len:
-            lines[-1] = [lines[-2][-1], lines[-1][0]]
-            del lines[-2][-1]
+            for j in range(i + 1, count + 1):
+                line_len += 1 + len(words[j - 1])
 
-        # convert to real lines
-        new_lines = list(map(lambda words: ''.join(words), lines))
+                if line_len > max_line_len and j - i >= 2:
+                    # doesn't fit anymore
+                    break
+
+                if j == count:
+                    # last line: free space doesn't matter
+                    cost = runt_cost if j - i == 1 and i > 0 else 0
+                else:
+                    cost = max(max_line_len - line_len, 0) ** 2
+
+                cost += best_costs[j]
+
+                # on a tie, prefer a longer line
+                if best_cost is None or cost <= best_cost:
+                    best_cost = cost
+                    next_starts[i] = j
+
+            assert best_cost is not None
+            best_costs[i] = best_cost
+
+        # build real lines from the chosen breaks
+        new_lines: List[str] = []
+        i = 0
+
+        while i < count:
+            new_lines.append(' '.join(words[i:next_starts[i]]))
+            i = next_starts[i]
 
         # remove trailing empty lines
         new_lines = _remove_trailing_empty_lines(new_lines)
