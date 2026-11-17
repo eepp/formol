@@ -323,7 +323,7 @@ Arrangement
 
 == Install Formol
 
-Formol only requires Python ≥ 3.8.
+Formol only requires Python ≥ 3.9.
 
 To install Formol:
 
